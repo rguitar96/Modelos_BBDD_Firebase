@@ -1,0 +1,105 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel = 'import' href = '../bower_components/polymer/polymer.html'>
+<link rel = "import" href = "../bower_components/paper-button/paper-button.html">
+<link rel = "import" href = "../bower_components/paper-styles/paper-styles.html">
+
+<script src="../scripts/main.js"></script>
+
+<dom-module id="login-element">
+
+    <!--  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>-->
+
+    <template>
+
+        <style>
+
+        </style>
+        <paper-button on-click="toggleSignIn" on-myevent="myfunc" class="mdl-button mdl-js-button mdl-button--raised" id="[[idBtnLogin]]" raised>{{textoBoton}}</paper-button>
+        <!-- shadow DOM goes here -->
+        <!--<iron-icon icon="[[toggleIcon]]" on-click="toggle">-->
+        <!-- <button disabled class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in">Sign in with Google</button>-->
+    </template>
+
+    <script>
+class LoginElement extends Polymer.Element {
+    static get is() {
+        return 'login-element';
+    }
+    static get properties() {
+        return {
+            textoBoton: {
+                type: String,
+                notify: true,
+                reflectToAttribute: true,
+                value: 'Conectarse'
+            },
+            pressed: {
+                type: Boolean,
+                notify: true,
+                reflectToAttribute: true,
+                value: false
+            },
+            toggleIcon: {
+                type: String
+            }
+        }
+    }
+    documentClickHandler(event) {
+        if (event.detail.usuario === 'anonimo') {
+            this.textoBoton = 'Conectarse'
+        } else {
+            this.textoBoton = 'Desconectar'
+        }
+    }
+    constructor() {
+        super();
+        this._boundListener = this.documentClickHandler.bind(this);
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        document.addEventListener('eventlogin', this._boundListener);
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        document.removeEventListener('eventlogin', this._boundListener);
+    }
+
+    toggleSignIn() {
+        if (!firebase.auth().currentUser) {
+            // [START createprovider]
+            var provider = new firebase.auth.GoogleAuthProvider();
+            // [END createprovider]
+            // [START addscopes]
+            provider.addScope('https://www.googleapis.com/auth/plus.login');
+            // [END addscopes]
+            // [START signin]
+            firebase.auth().signInWithRedirect(provider);
+            this.textoBoton = 'Desconectar';
+            document.getElementById('login').textContent = 'Sign out';
+            // [END signin]
+        } else {
+            // [START signout]
+            firebase.auth().signOut();
+            this.textoBoton = 'Conectarse';
+            // [END signout]
+        }
+        // [START_EXCLUDE]
+        document.getElementById('quickstart-sign-in').disabled = true;
+        // [END_EXCLUDE]
+    }
+}
+
+
+
+customElements.define(LoginElement.is, LoginElement);
+    </script>
+
+</dom-module>
+
