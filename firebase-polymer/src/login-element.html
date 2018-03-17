@@ -5,6 +5,7 @@
 <link rel = 'import' href = '../bower_components/polymer/polymer.html'>
 <link rel = "import" href = "../bower_components/paper-button/paper-button.html">
 <link rel = "import" href = "../bower_components/paper-styles/paper-styles.html">
+<link rel = "import" href = "../bower_components/polymerfire/firebase-auth.html">
 
 <script src="../scripts/main.js"></script>
 
@@ -19,7 +20,11 @@
         <style>
 
         </style>
-        <paper-button on-click="toggleSignIn" on-myevent="myfunc" class="mdl-button mdl-js-button mdl-button--raised" id="[[idBtnLogin]]" raised>{{textoBoton}}</paper-button>
+        <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
+        </firebase-auth>
+        <paper-button on-tap="login" hidden$="[[user]]"raised>Conectarse</paper-button>
+        <paper-button on-tap="logout" hidden$="[[!user]]" raised>Desconectar</paper-button>
+        <!--<paper-button on-click="toggleSignIn" on-myevent="myfunc" class="mdl-button mdl-js-button mdl-button--raised" id="[[idBtnLogin]]" raised>{{textoBoton}}</paper-button>-->
         <!-- shadow DOM goes here -->
         <!--<iron-icon icon="[[toggleIcon]]" on-click="toggle">-->
         <!-- <button disabled class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in">Sign in with Google</button>-->
@@ -32,6 +37,12 @@ class LoginElement extends Polymer.Element {
     }
     static get properties() {
         return {
+            user: {
+                type: Object
+            },
+            statusKnown: {
+                type: Object
+            },
             textoBoton: {
                 type: String,
                 notify: true,
@@ -49,51 +60,61 @@ class LoginElement extends Polymer.Element {
             }
         }
     }
-    documentClickHandler(event) {
-        if (event.detail.usuario === 'anonimo') {
-            this.textoBoton = 'Conectarse'
-        } else {
-            this.textoBoton = 'Desconectar'
-        }
+    login() {
+        return this.$.auth.signInWithPopup();
+        //comprueba si existe un usuario con ese id
+            firebase.database().ref('/usuarios/' + uid).once('value').then(function (snapshot) {
+                var existe = (snapshot.val() !== null);
+                if (!existe) { //el usuario no existe
+                    //Inserta los datos del usuario
+                    writeUserData(uid, displayName, email, photoURL);
+                } else {
+                    esAdmin = snapshot.val().admin;
+                    if (esAdmin !== null) {
+                        var child = document.getElementById("login-element");
+                        child.parentNode.removeChild(child);
+                        // Create the event
+                        var event = new CustomEvent("eventlogin", {"detail": {"usuario": "admin"}});
+                        document.dispatchEvent(event);
+                    } else {
+                        var event = new CustomEvent("eventlogin", {"datail": {"usuario": "usuario"}});
+                        document.dispatchEvent(event);
+                    }
+                }
+
+            });
     }
+    logout() {
+        return this.$.auth.signOut();
+    }
+
     constructor() {
         super();
-        this._boundListener = this.documentClickHandler.bind(this);
     }
 
-    connectedCallback() {
-        super.connectedCallback();
-        document.addEventListener('eventlogin', this._boundListener);
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        document.removeEventListener('eventlogin', this._boundListener);
-    }
-
-    toggleSignIn() {
-        if (!firebase.auth().currentUser) {
-            // [START createprovider]
-            var provider = new firebase.auth.GoogleAuthProvider();
-            // [END createprovider]
-            // [START addscopes]
-            provider.addScope('https://www.googleapis.com/auth/plus.login');
-            // [END addscopes]
-            // [START signin]
-            firebase.auth().signInWithRedirect(provider);
-            this.textoBoton = 'Desconectar';
-            document.getElementById('login').textContent = 'Sign out';
-            // [END signin]
-        } else {
-            // [START signout]
-            firebase.auth().signOut();
-            this.textoBoton = 'Conectarse';
-            // [END signout]
-        }
-        // [START_EXCLUDE]
-        document.getElementById('quickstart-sign-in').disabled = true;
-        // [END_EXCLUDE]
-    }
+    /*toggleSignIn() {
+     if (!firebase.auth().currentUser) {
+     // [START createprovider]
+     var provider = new firebase.auth.GoogleAuthProvider();
+     // [END createprovider]
+     // [START addscopes]
+     provider.addScope('https://www.googleapis.com/auth/plus.login');
+     // [END addscopes]
+     // [START signin]
+     firebase.auth().signInWithRedirect(provider);
+     this.textoBoton = 'Desconectar';
+     document.getElementById('login').textContent = 'Sign out';
+     // [END signin]
+     } else {
+     // [START signout]
+     firebase.auth().signOut();
+     this.textoBoton = 'Conectarse';
+     // [END signout]
+     }
+     // [START_EXCLUDE]
+     document.getElementById('quickstart-sign-in').disabled = true;
+     // [END_EXCLUDE]
+     }*/
 }
 
 
