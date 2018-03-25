@@ -101,9 +101,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-form id="ironForm">
                 <form id="form">
                     <div class="contenedor">
-                        <div>
+                        <!--<div>
                             <img class="img-perfil" src="{{imagen}}" alt="Logotipo OT" width="800" height="500">
-                        </div>
+                        </div>-->
                         <div>
                             <paper-input always-float-label label="Nombre" value="{{nombre}}" required></paper-input>
                             <paper-input always-float-label label="Apellidos" value="{{apellidos}}" required></paper-input>
@@ -113,7 +113,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             </paper-input>
                             <paper-input type="file" id="inputFile" files="{{imagen}}">Selecciona la imagen</paper-input>
 
-                            <paper-button on-click="insertarImagen" class="mdl-button mdl-js-button mdl-button--raised" raised>Guardar</paper-button>
+                            <paper-button on-click="insertar" class="mdl-button mdl-js-button mdl-button--raised" raised>Guardar</paper-button>
 
                         </div>
 
@@ -139,8 +139,7 @@ class InsertarConcursante extends Polymer.Element {
             correo: {type: String},
             imagen: {type: Object},
             usuario: {
-                type: Object,
-                observer: '_publico'
+                type: Object
             },
             checked: {
                 type: String,
@@ -153,31 +152,34 @@ class InsertarConcursante extends Polymer.Element {
             }
         }
     }
-    insertar(urlImg) {
-        alert('insertar')
-        //if (this.$.ironForm.validate()) {
-            alert('validado')
-            var claveConcursante = firebase.database().ref().child('concursantes').push().key;
-            alert(claveConcursante);
-            alert('url: ' + urlImg)
-            firebase.database().ref('concursantes/' + claveConcursante).set({
-                nombre: this.nombre,
-                apellidos: this.apellidos,
-                correo: this.correo,
-                imagen: urlImg
+    insertar() {
+        if (this.$.ironForm.validate()) {
+            var nombre = this.nombre;
+            var apellidos = this.apellidos;
+            var correo = this.correo;
+            var formulario = this.$.ironForm;
+            var toast = this.$.toast;
+            this.insertarImagen(function insertarRegistro(urlImg) {
+                var claveConcursante = firebase.database().ref().child('concursantes').push().key;
+                console.log('clave: ' + claveConcursante)
+                console.log('nombre: ' + nombre)
+                console.log('urlimg: ' + urlImg)
+                firebase.database().ref('concursantes/' + claveConcursante).set({
+                    nombre: nombre,
+                    apellidos: apellidos,
+                    correo: correo,
+                    imagen: urlImg
+                });
+                formulario.reset();
+                toast.open();
             });
-            this.$.ironForm.reset();
-            this.$.toast.open();
-       // }
+        }
     }
-    
-    insertarImagen() {
+
+    insertarImagen(callback) {
         var storageRef = firebase.storage().ref();
-        //var files = document.getElementById('inputFile').files;
+
         var files = this.$.inputFile.inputElement.inputElement.files;
-        //var files = this.$.imagen;
-        //alert('files: '+this.imagen);
-        //alert(files)
 
         if (!files.length) {
             alert('Please select a file!');
@@ -185,38 +187,57 @@ class InsertarConcursante extends Polymer.Element {
         }
 
         var file = files[0];
-        //var file = this.imagen;
 
         var metadata = {
             'contentType': file.type
         };
 
+        var urlImg = '';
 
-        var url='';
-        // Push to child path.
-        // [START oncomplete]
-        storageRef.child('images/' + file.name).put(file, metadata).then(function (snapshot) {
-            console.log('Uploaded', snapshot.totalBytes, 'bytes.');
-            console.log(snapshot.metadata);
-            url = snapshot.downloadURL
-            alert('url: ' + url)
-            //insertar(url)
-            // return url;
-            
-            console.log('File available at', url);
-            // [START_EXCLUDE]
-            //document.getElementById('linkbox').innerHTML = '<a href="' + url + '">Click For File</a>';
-            // [END_EXCLUDE]
-        }).catch(function (error) {
-            // [START onfailure]
-            alert('uploaded failed');
-            console.error('Upload failed:', error);
-            // [END onfailure]
+        // Upload file and metadata to the object 'images/mountains.jpg'
+        var uploadTask = storageRef.child('images/' + file.name).put(file, metadata);
+
+// Listen for state changes, errors, and completion of the upload.
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+                function (snapshot) {
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                        case firebase.storage.TaskState.PAUSED: // or 'paused'
+                            console.log('Upload is paused');
+                            break;
+                        case firebase.storage.TaskState.RUNNING: // or 'running'
+                            console.log('Upload is running');
+                            break;
+                    }
+                }, function (error) {
+
+            // A full list of error codes is available at
+            // https://firebase.google.com/docs/storage/web/handle-errors
+            switch (error.code) {
+                case 'storage/unauthorized':
+                    // User doesn't have permission to access the object
+                    break;
+
+                case 'storage/canceled':
+                    // User canceled the upload
+                    break;
+
+                case 'storage/unknown':
+                    // Unknown error occurred, inspect error.serverResponse
+                    break;
+            }
+        }, function () {
+            // Upload completed successfully, now we can get the download URL
+            var downloadURL = uploadTask.snapshot.downloadURL;
+            urlImg = downloadURL;
+            console.log('urlimg: ' + urlImg);
+            callback(urlImg);
+
         });
-        //return url;
+        return urlImg;
     }
-
-    
 
 }
 

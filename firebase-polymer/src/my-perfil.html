@@ -69,9 +69,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 margin-right: 50px;
             }
             paper-toast {
-   width: 300px;
-   margin-left: calc(50vw - 150px);
-}
+                width: 300px;
+                margin-left: calc(50vw - 150px);
+            }
 
         </style>
 
@@ -151,7 +151,7 @@ class MyPerfil extends Polymer.Element {
         var privado;
         if (this.checked === 'checked') {
             privado = false;
-        }else {
+        } else {
             privado = true;
         }
         firebase.database().ref('usuarios/' + this.user.uid).update({

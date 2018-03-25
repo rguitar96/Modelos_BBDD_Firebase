@@ -1,0 +1,262 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+
+
+
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel = "import" href = "../bower_components/polymerfire/firebase-auth.html">
+<link rel = "import" href = "../bower_components/polymerfire/firebase-document.html">
+
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="icon-toggle.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="my-programas">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+
+                padding: 10px;
+                font-family: sans-serif;
+                --icon-toggle-color: green;
+                --icon-toggle-outline-color: green;
+                --icon-toggle-pressed-color: white;
+                --iron-icon-width: 40px;
+                --iron-icon-height: 40px;
+                --visible: flex
+            }
+            .contenedor {
+                display: var(--visible);
+                max-width: 500px;
+                margin: auto;
+            }
+
+            paper-textarea {
+                max-width: 500px;
+            }
+
+            paper-toast {
+                width: 300px;
+                margin-left: calc(50vw - 150px);
+            }
+        </style>
+
+        <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
+        </firebase-auth>
+        <firebase-document
+            path="/programas"
+            data="{{dataProgramas}}">
+        </firebase-document>
+
+        <paper-toast id="toast" text="Registro insertado"></paper-toast>
+        <paper-toast id="toastBorrar" text="Registro borrado"></paper-toast>
+        <div class="card">
+            <!--<div class="circle">2</div>-->
+            <h1>Programas</h1>
+            <ul>
+                <template is="dom-repeat" items="{{listaProgramas}}" as="item">
+                    <li>
+                        <div># [[index]] Nombre: <span>[[item.valor.nombre]]</span></div>
+                        <div>Descripcion: <span>[[item.valor.descripcion]]</span></div>
+                    <paper-button on-click="_borrar" >Borrar</paper-button>
+                    </li>
+                </template>
+            </ul>
+            <div>
+                <icon-toggle toggle-icon="add" pressed="{{pulsado}}"></icon-toggle>
+                <span>[[_message(pulsado)]]</span>
+            </div>
+            <iron-form id="ironForm">
+                <form>
+                    <div class="contenedor">
+                        <!--<div>
+                            <img class="img-perfil" src="{{imagen}}" alt="Logotipo OT" width="800" height="500">
+                        </div>-->
+                        <div>
+                            <paper-input always-float-label label="Nombre" value="{{nombre}}" required></paper-input>
+                            <paper-textarea cols="50" always-float-label label="Descripción" value="{{descripcion}}" required></paper-textarea>
+
+                            <paper-input type="file" id="inputFile" files="{{imagen}}" required>Selecciona la imagen</paper-input>
+
+                            <p><paper-button on-click="insertar" class="mdl-button mdl-js-button mdl-button--raised" raised>Crear</paper-button></p>
+
+                        </div>
+
+                    </div>
+                </form>
+            </iron-form>
+        </div>
+    </template>
+
+    <script>
+        class MyProgramas extends Polymer.Element {
+            static get is() {
+                return 'my-programas';
+            }
+
+            static get properties() {
+                return {
+                    employees: {
+                        type: Array,
+                        notify: true,
+                        reflectToAttribute: true,
+                        value() {
+                            return [
+                                {first: 'Bob', last: 'Smith'},
+                                {first: 'Sally', last: 'Johnson'},
+                            ];
+                        }
+                    },
+                    dataProgramas: {
+                        type: Object,
+                        observer: 'list'
+                    },
+                    listaProgramas: {
+                        type: Array,
+                        notifiy: true
+                    },
+                    _borrar: function (e) {
+                        var it = e.model.item;
+
+                        console.log('borrar: ' + it);
+                        //firebase.database().ref('programas/' + clavePrograma).remove();
+                        this.$.toastBorrar.open();
+                    }
+                }
+            }
+            list() {
+                var arr = [];
+                var i = 0;
+                var json = this.dataProgramas;
+                for (const [key, value] of Object.entries(json)) {
+                    var obj = {id: key, valor: value};
+                    arr[i] = obj;
+                    i++;
+                }
+                this.listaProgramas = arr;
+                this.notifyPath('listaProgramas');
+            }
+            _message(pulsado) {
+                if (!pulsado) {
+                    this.updateStyles({
+                        '--visible': 'none',
+                    });
+                    return 'Añadir nuevo programa';
+                } else {
+                    this.updateStyles({
+                        '--visible': 'flex',
+                    });
+                    return 'Nuevo programa';
+                }
+            }
+
+            borrar(clavePrograma) {
+                console.log('borrar: ' + clavePrograma);
+                //firebase.database().ref('programas/' + clavePrograma).remove();
+                this.$.toastBorrar.open();
+            }
+
+            insertar() {
+                if (this.$.ironForm.validate()) {
+                    var nombre = this.nombre;
+                    var descripcion = this.descripcion;
+                    var formulario = this.$.ironForm;
+                    var toast = this.$.toast;
+                    var instancia = this;
+                    this.insertarImagen(function insertarRegistro(urlImg) {
+                        var clavePrograma = firebase.database().ref().child('programas').push().key;
+                        firebase.database().ref('programas/' + clavePrograma).set({
+                            nombre: nombre,
+                            descripcion: descripcion,
+                            imagen: urlImg
+                        });
+                        formulario.reset();
+                        toast.open();
+                        instancia.list();
+                    });
+                }
+            }
+
+            insertarImagen(callback) {
+                var storageRef = firebase.storage().ref();
+
+                var files = this.$.inputFile.inputElement.inputElement.files;
+
+                if (!files.length) {
+                    alert('Please select a file!');
+                    return;
+                }
+
+                var file = files[0];
+
+                var metadata = {
+                    'contentType': file.type
+                };
+
+                var urlImg = '';
+
+                // Upload file and metadata to the object 'images/mountains.jpg'
+                var uploadTask = storageRef.child('images/' + file.name).put(file, metadata);
+
+// Listen for state changes, errors, and completion of the upload.
+                uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+                        function (snapshot) {
+                            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            console.log('Upload is ' + progress + '% done');
+                            switch (snapshot.state) {
+                                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                                    console.log('Upload is paused');
+                                    break;
+                                case firebase.storage.TaskState.RUNNING: // or 'running'
+                                    console.log('Upload is running');
+                                    break;
+                            }
+                        }, function (error) {
+
+                    // A full list of error codes is available at
+                    // https://firebase.google.com/docs/storage/web/handle-errors
+                    switch (error.code) {
+                        case 'storage/unauthorized':
+                            // User doesn't have permission to access the object
+                            break;
+
+                        case 'storage/canceled':
+                            // User canceled the upload
+                            break;
+
+                        case 'storage/unknown':
+                            // Unknown error occurred, inspect error.serverResponse
+                            break;
+                    }
+                }, function () {
+                    // Upload completed successfully, now we can get the download URL
+                    var downloadURL = uploadTask.snapshot.downloadURL;
+                    urlImg = downloadURL;
+                    console.log('urlimg: ' + urlImg);
+                    callback(urlImg);
+
+                });
+                return urlImg;
+            }
+        }
+
+        window.customElements.define(MyProgramas.is, MyProgramas);
+    </script>
+</dom-module>

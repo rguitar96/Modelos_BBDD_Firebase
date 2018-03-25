@@ -110,7 +110,7 @@ function initApp() {
 /**
  * Triggers every time there is a change in the Firebase auth state (i.e. user signed-in or user signed out).
  */
-function onAuthStateChanged(user) {
+/*function onAuthStateChanged(user) {
     // We ignore token refresh events.
     if (user && currentUID === user.uid) {
         return;
@@ -175,4 +175,4 @@ window.addEventListener('load', function () {
         titleInput.value = '';
     };
     recentMenuButton.onclick();
-}, false);
+}, false);*/
