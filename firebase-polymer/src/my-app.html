@@ -32,6 +32,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="lazy-import" href="my-view3.html">
 <link rel="lazy-import" href="my-view404.html">
 
+
 <script src="../scripts/main.js"></script>
 
 <dom-module id="my-app">
@@ -78,7 +79,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <firebase-app auth-domain="practica2-93618.firebaseapp.com"
                       database-url="https://practica2-93618.firebaseio.com"
                       api-key="AIzaSyC_loC3LzYFuu8dO6KHpL2pAkutbLO3zZI"
-                      storage-bucket="practica2-93618.appspot.com">
+                      storage-bucket="practica2-93618.appspot.com"
+                      >
         </firebase-app>
         <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
         </firebase-auth>
@@ -86,7 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             path="/usuarios/[[user.uid]]"
             data="{{usuario}}">
         </firebase-document>
-        
+
         <app-location
             route="{{route}}"
             url-space-regex="^[[rootPath]]">
@@ -105,10 +107,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <app-toolbar>Menu</app-toolbar>
                 <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
                     <a name="inicio" href="[[rootPath]]inicio">Bienvenido</a>
-                    <template is="dom-if" if="[[user]]">
-                    <a name="perfil" href="[[rootPath]]perfil">Perfil</a>
-                    <a name="insertar-concursante" href="[[rootPath]]insertar-concursante">Insertar Concursante</a>
-                    <a name="programas" href="[[rootPath]]programas">Programas</a>
+                    <template is="dom-if" if="{{user}}">
+                        <a name="perfil" href="[[rootPath]]perfil">Perfil</a>
+                    </template>
+                    <template is="dom-if" if="{{usuario.admin}}">
+                        <a name="insertar-concursante" href="[[rootPath]]insertar-concursante">Insertar Concursante</a>
+                        <a name="programas" href="[[rootPath]]programas">Programas</a>
                     </template>
                     <a name="view2" href="[[rootPath]]view2">View Two</a>
                     <a name="view3" href="[[rootPath]]view3">View Three</a>
@@ -137,7 +141,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     <my-inicio name="inicio"></my-inicio>
                     <my-perfil name="perfil"></my-perfil>
                     <my-insertar-concursante name="insertar-concursante"></my-insertar-concursante>
-                    <my-programas name="programas"></my-programas>
+                    <my-programas name="programas" id-programa="{{idPrograma}}"></my-programas>
+                    <my-detalle-programa name="detalle-programa" id-programa="{{idPrograma}}"></my-detalle-programa>
                     <my-view2 name="view2"></my-view2>
                     <my-view3 name="view3"></my-view3>
                     <my-view404 name="view404"></my-view404>
@@ -147,87 +152,103 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
 
     <script>
-  // Gesture events like tap and track generated from touch will not be
-  // preventable, allowing for better scrolling performance.
-  Polymer.setPassiveTouchGestures(true);
+// Gesture events like tap and track generated from touch will not be
+// preventable, allowing for better scrolling performance.
+Polymer.setPassiveTouchGestures(true);
 
-  class MyApp extends Polymer.Element {
-      static get is() {
-          return 'my-app';
-      }
+class MyApp extends Polymer.Element {
+    static get is() {
+        return 'my-app';
+    }
 
-      static get properties() {
-          return {
-              page: {
-                  type: String,
-                  reflectToAttribute: true,
-                  observer: '_pageChanged',
-              },
-              user: {
-                  type: Object,
-                  reflectToAttribute: true,
-                  observer: '_cambioEstadoUsuario'
-              },
-              usuario: {
-                  type: Object
-              },
-              routeData: Object,
-              subroute: Object,
-              // This shouldn't be neccessary, but the Analyzer isn't picking up
-              // Polymer.Element#rootPath
-              rootPath: String,
-          };
-      }
-      _cambioEstadoUsuario() {
-          //comprueba si existe un usuario con ese id
-          console.log('usuario: '+ this.user)
-            firebase.database().ref('/usuarios/' + this.usuario.uid).once('value').then(function (snapshot) {
-                
-                var existe = (snapshot.val() !== null);
-                if (!existe) { //el usuario no existe
-                    //Inserta los datos del usuario
-                    writeUserData(this.usuario.uid, this.usuario.displayName, this.usuario.email, this.usuario.photoURL);
-                } 
+    static get properties() {
+        return {
+            page: {
+                type: String,
+                reflectToAttribute: true,
+                observer: '_pageChanged',
+            },
+            user: {
+                type: Object,
+                reflectToAttribute: true,
+                notify: true,
+                observer: '_cambioEstadoUsuario'
+            },
+            usuario: {
+                type: Object,
+                observer: '_datosUsuario'
+            },
+            routeData: Object,
+            subroute: Object,
+            // This shouldn't be neccessary, but the Analyzer isn't picking up
+            // Polymer.Element#rootPath
+            rootPath: String,
+        };
+    }
+    _datosUsuario() {
+        console.log('datos usuario: ' + this.usuario.nombre)
+    }
+    _cambioEstadoUsuario() {
+        if (this.user) {
+            console.log('uid: ' + this.user.uid)
+            console.log('nombre: ' + this.user.displayName)
+            console.log('email: ' + this.user.email)
+            console.log('imagen: ' + this.user.photoURL)
+            firebase.database().ref('usuarios/' + this.user.uid).update({
+                nombre: this.user.displayName,
+                correo: this.user.email,
+                imagen: this.user.photoURL
             });
+        }
+        /*//comprueba si existe un usuario con ese id
+         console.log('usuario: ' + this.user)
+         firebase.database().ref('/usuarios/' + this.usuario.uid).once('value').then(function (snapshot) {
+         
+         var existe = (snapshot.val() !== null);
+         if (!existe) { //el usuario no existe
+         //Inserta los datos del usuario
+         writeUserData(this.user.uid, this.user.displayName, this..email, this.usuario.photoURL);
+         }
+         });*/
 
-      }
+    }
 
-      static get observers() {
-          return [
-              '_routePageChanged(routeData.page)',
-          ];
-      }
+    static get observers() {
+        return [
+            '_routePageChanged(routeData.page)',
+        ];
+    }
 
-      _routePageChanged(page) {
-          // If no page was found in the route data, page will be an empty string.
-          // Default to 'view1' in that case.
-          this.page = page || 'inicio';
+    _routePageChanged(page) {
+        // If no page was found in the route data, page will be an empty string.
+        // Default to 'view1' in that case.
+        this.page = page || 'inicio';
 
-          // Close a non-persistent drawer when the page & route are changed.
-          if (!this.$.drawer.persistent) {
-              this.$.drawer.close();
-          }
-      }
+        // Close a non-persistent drawer when the page & route are changed.
+        if (!this.$.drawer.persistent) {
+            this.$.drawer.close();
+        }
+    }
 
-      _pageChanged(page) {
-          // Load page import on demand. Show 404 page if fails
-          const resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
-          Polymer.importHref(
-                  resolvedPageUrl,
-                  null,
-                  this._showPage404.bind(this),
-                  true);
-      }
+    _pageChanged(page) {
+        // Load page import on demand. Show 404 page if fails
+        const resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+        Polymer.importHref(
+                resolvedPageUrl,
+                null,
+                this._showPage404.bind(this),
+                true);
+    }
 
-      _showPage404() {
-          this.page = 'view404';
-      }
+    _showPage404() {
+        this.page = 'view404';
+    }
 
-      constructor() {
-          super();
-      }
-  }
+    constructor() {
+        super();
+    }
+}
 
-  window.customElements.define(MyApp.is, MyApp);
+window.customElements.define(MyApp.is, MyApp);
     </script>
 </dom-module>

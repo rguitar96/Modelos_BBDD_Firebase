@@ -5,6 +5,7 @@
 <link rel = 'import' href = '../bower_components/polymer/polymer.html'>
 <link rel = "import" href = "../bower_components/paper-button/paper-button.html">
 <link rel = "import" href = "../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../bower_components/firebase-element/firebase.html">
 <link rel = "import" href = "../bower_components/polymerfire/firebase-auth.html">
 
 <script src="../scripts/main.js"></script>
@@ -60,10 +61,14 @@ class LoginElement extends Polymer.Element {
             }
         }
     }
+    handleError(){
+        alert('error login')
+    }
     login() {
-        return this.$.auth.signInWithPopup();
+        this.$.auth.signInWithPopup();
+        //return this.$.auth.login();
         //comprueba si existe un usuario con ese id
-            firebase.database().ref('/usuarios/' + uid).once('value').then(function (snapshot) {
+            /*firebase.database().ref('/usuarios/' + uid).once('value').then(function (snapshot) {
                 var existe = (snapshot.val() !== null);
                 if (!existe) { //el usuario no existe
                     //Inserta los datos del usuario
@@ -71,8 +76,6 @@ class LoginElement extends Polymer.Element {
                 } else {
                     esAdmin = snapshot.val().admin;
                     if (esAdmin !== null) {
-                        var child = document.getElementById("login-element");
-                        child.parentNode.removeChild(child);
                         // Create the event
                         var event = new CustomEvent("eventlogin", {"detail": {"usuario": "admin"}});
                         document.dispatchEvent(event);
@@ -82,7 +85,7 @@ class LoginElement extends Polymer.Element {
                     }
                 }
 
-            });
+            });*/
     }
     logout() {
         return this.$.auth.signOut();

@@ -12,19 +12,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
-
-
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel = "import" href = "../bower_components/polymerfire/firebase-auth.html">
 <link rel = "import" href = "../bower_components/polymerfire/firebase-document.html">
+<link rel = "import" href = "../bower_components/polymerfire/firebase-query.html">
 
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+
 <link rel="import" href="icon-toggle.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
 
 <dom-module id="my-programas">
     <template>
@@ -39,12 +45,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 --icon-toggle-pressed-color: white;
                 --iron-icon-width: 40px;
                 --iron-icon-height: 40px;
-                --visible: flex
+                --visible: none;
             }
             .contenedor {
                 display: var(--visible);
                 max-width: 500px;
                 margin: auto;
+                padding: 20px;
+                border-radius: 8px;
+                background-color: white;
+                border: 1px solid #ddd;
+                max-width: 800px;
+                margin: 16px auto 0 auto;
             }
 
             paper-textarea {
@@ -55,33 +67,103 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 width: 300px;
                 margin-left: calc(50vw - 150px);
             }
+
+            iron-list {
+                /*padding-top: 148px;
+                margin-top: 64px;*/
+                padding-bottom: 16px;
+            }
+
+            .item {
+                @apply --layout-horizontal;
+                padding: 20px;
+                border-radius: 8px;
+                background-color: white;
+                border: 1px solid #ddd;
+                max-width: 800px;
+                margin: 16px auto 0 auto;
+            }
+
+            .item:focus {
+                outline: 0;
+                border-color: #333;
+            }
+
+            .avatar {
+                height: 40px;
+                width: 40px;
+                border-radius: 20px;
+                box-sizing: border-box;
+                background-color: #DDD;
+            }
+
+            .pad {
+                padding: 0 16px;
+                @apply --layout-flex;
+                @apply --layout-vertical;
+            }
+
+            .primary {
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .secondary {
+                font-size: 14px;
+            }
+
+            .dim {
+                color: gray;
+            }
+
+            .spacer {
+                @apply --layout-flex;
+            }
+
         </style>
 
         <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
         </firebase-auth>
-        <firebase-document
+        <!--<firebase-document
             path="/programas"
             data="{{dataProgramas}}">
+        </firebase-document>-->
+
+        <firebase-document
+            path="/usuarios/[[user.uid]]"
+            data="{{usuario}}">
         </firebase-document>
+        <firebase-document
+            path="/concursantes"
+            data="{{dataConcursantes}}">
+        </firebase-document>
+        <firebase-query
+            path="/programas"
+            data="{{dataProgramas}}">
+        </firebase-query>
+
+
+        <app-route
+            route="{{route}}"
+            pattern="[[rootPath]]:page"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+        </app-route>
+
+
 
         <paper-toast id="toast" text="Registro insertado"></paper-toast>
         <paper-toast id="toastBorrar" text="Registro borrado"></paper-toast>
         <div class="card">
             <!--<div class="circle">2</div>-->
             <h1>Programas</h1>
-            <ul>
-                <template is="dom-repeat" items="{{listaProgramas}}" as="item">
-                    <li>
-                        <div># [[index]] Nombre: <span>[[item.valor.nombre]]</span></div>
-                        <div>Descripcion: <span>[[item.valor.descripcion]]</span></div>
-                    <paper-button on-click="_borrar" >Borrar</paper-button>
-                    </li>
-                </template>
-            </ul>
-            <div>
-                <icon-toggle toggle-icon="add" pressed="{{pulsado}}"></icon-toggle>
-                <span>[[_message(pulsado)]]</span>
-            </div>
+
+            <template is="dom-if" if="{{usuario.admin}}">
+                <div>
+                    <icon-toggle toggle-icon="add" pressed="{{pulsado}}"></icon-toggle>
+                    <span>[[_message(pulsado)]]</span>
+                </div>
+            </template>
             <iron-form id="ironForm">
                 <form>
                     <div class="contenedor">
@@ -92,7 +174,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             <paper-input always-float-label label="Nombre" value="{{nombre}}" required></paper-input>
                             <paper-textarea cols="50" always-float-label label="Descripción" value="{{descripcion}}" required></paper-textarea>
 
-                            <paper-input type="file" id="inputFile" files="{{imagen}}" required>Selecciona la imagen</paper-input>
+                            <paper-input type="file" label="Imagen" id="inputFile" files="{{imagen}}" required>Selecciona la imagen</paper-input>
 
                             <p><paper-button on-click="insertar" class="mdl-button mdl-js-button mdl-button--raised" raised>Crear</paper-button></p>
 
@@ -101,6 +183,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     </div>
                 </form>
             </iron-form>
+
+
+
+            <iron-list items="{{dataProgramas}}" as="item">
+                <template>
+                    <div>
+                        <div class="item" tabindex$="[[tabIndex]]">
+                             <iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image>
+                            <div class="pad">
+                                <div class="primary">[[item.nombre]] [[index]]</div>
+                                <!--<div class="secondary">[[item.shortText]]</div>-->
+                                <div class="secondary dim">[[item.descripcion]]</div>
+                            </div>
+                            <a name="detalle-programa" href="[[rootPath]]detalle-programa">
+                                <paper-button id-programa="[[item.$key]]" on-click="detalles" >Ver</paper-button>
+                            </a>
+                            <paper-button id-programa="[[item.$key]]" on-click="borrar" >Borrar</paper-button>
+                        </div>
+                    </div>
+                </template>
+            </iron-list>
+
         </div>
     </template>
 
@@ -112,45 +216,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             static get properties() {
                 return {
-                    employees: {
-                        type: Array,
+                    idPrograma: {
+                        type: String,
                         notify: true,
-                        reflectToAttribute: true,
-                        value() {
-                            return [
-                                {first: 'Bob', last: 'Smith'},
-                                {first: 'Sally', last: 'Johnson'},
-                            ];
-                        }
+                        //observer: 'detalles'
                     },
                     dataProgramas: {
-                        type: Object,
+                        type: Array,
+                        reflectToAttribute: true,
+                        notifiy: true,
                         observer: 'list'
                     },
                     listaProgramas: {
                         type: Array,
                         notifiy: true
                     },
-                    _borrar: function (e) {
-                        var it = e.model.item;
-
-                        console.log('borrar: ' + it);
-                        //firebase.database().ref('programas/' + clavePrograma).remove();
-                        this.$.toastBorrar.open();
-                    }
+                    usuario: {
+                        type: Object
+                    },
                 }
             }
+            detalles(e) {
+                var clavePrograma = e.model.get('item.$key');
+                this.idPrograma = clavePrograma;
+            }
+            //actualiza los datos
             list() {
-                var arr = [];
-                var i = 0;
-                var json = this.dataProgramas;
-                for (const [key, value] of Object.entries(json)) {
-                    var obj = {id: key, valor: value};
-                    arr[i] = obj;
-                    i++;
-                }
-                this.listaProgramas = arr;
-                this.notifyPath('listaProgramas');
+                this.notifyPath('dataProgramas');
             }
             _message(pulsado) {
                 if (!pulsado) {
@@ -166,9 +258,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 }
             }
 
-            borrar(clavePrograma) {
-                console.log('borrar: ' + clavePrograma);
-                //firebase.database().ref('programas/' + clavePrograma).remove();
+            borrar(e) {
+                var clavePrograma = e.model.get('item.$key');
+                firebase.database().ref('programas/' + clavePrograma).remove();
                 this.$.toastBorrar.open();
             }
 
@@ -179,6 +271,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     var formulario = this.$.ironForm;
                     var toast = this.$.toast;
                     var instancia = this;
+                    console.log(this.dataConcursantes)
                     this.insertarImagen(function insertarRegistro(urlImg) {
                         var clavePrograma = firebase.database().ref().child('programas').push().key;
                         firebase.database().ref('programas/' + clavePrograma).set({
@@ -186,8 +279,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             descripcion: descripcion,
                             imagen: urlImg
                         });
+
+                        firebase.database().ref('puntuaciones_programas/' + clavePrograma).set(
+                                instancia.dataConcursantes
+                                );
                         formulario.reset();
                         toast.open();
+                        console.log('instancia: ' + instancia);
                         instancia.list();
                     });
                 }
