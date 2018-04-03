@@ -1,73 +1,114 @@
-[debug] [2018-03-24T19:53:22.141Z] ----------------------------------------------------------------------
-[debug] [2018-03-24T19:53:22.144Z] Command:       /usr/bin/node /usr/local/bin/firebase serve
-[debug] [2018-03-24T19:53:22.145Z] CLI Version:   3.17.6
-[debug] [2018-03-24T19:53:22.145Z] Platform:      linux
-[debug] [2018-03-24T19:53:22.145Z] Node Version:  v9.8.0
-[debug] [2018-03-24T19:53:22.145Z] Time:          Sat Mar 24 2018 20:53:22 GMT+0100 (CET)
-[debug] [2018-03-24T19:53:22.145Z] ----------------------------------------------------------------------
+[debug] [2018-04-02T21:18:08.257Z] ----------------------------------------------------------------------
+[debug] [2018-04-02T21:18:08.260Z] Command:       /usr/bin/node /usr/local/bin/firebase serve
+[debug] [2018-04-02T21:18:08.260Z] CLI Version:   3.17.7
+[debug] [2018-04-02T21:18:08.261Z] Platform:      linux
+[debug] [2018-04-02T21:18:08.261Z] Node Version:  v9.8.0
+[debug] [2018-04-02T21:18:08.261Z] Time:          Mon Apr 02 2018 23:18:08 GMT+0200 (CEST)
+[debug] [2018-04-02T21:18:08.261Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2018-03-24T19:53:22.153Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-03-24T19:53:22.153Z] > authorizing via signed-in user
-[debug] [2018-03-24T19:53:22.155Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/practica2-93618  
+[debug] [2018-04-02T21:18:08.275Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-04-02T21:18:08.275Z] > authorizing via signed-in user
+[debug] [2018-04-02T21:18:08.278Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/practica2-93618  
   
- Sat Mar 24 2018 20:53:22 GMT+0100 (CET)
-[debug] [2018-03-24T19:53:22.922Z] <<< HTTP RESPONSE 200
-[debug] [2018-03-24T19:53:22.925Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/practica2-93618/tokens  
+ Mon Apr 02 2018 23:18:08 GMT+0200 (CEST)
+[debug] [2018-04-02T21:18:09.100Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-02T21:18:09.102Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/practica2-93618/tokens  
   
- Sat Mar 24 2018 20:53:22 GMT+0100 (CET)
-[debug] [2018-03-24T19:53:23.555Z] <<< HTTP RESPONSE 200
-[debug] [2018-03-24T19:53:23.558Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/practica2-93618  
+ Mon Apr 02 2018 23:18:09 GMT+0200 (CEST)
+[debug] [2018-04-02T21:18:09.657Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-02T21:18:09.658Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/practica2-93618  
   
- Sat Mar 24 2018 20:53:23 GMT+0100 (CET)
-[debug] [2018-03-24T19:53:24.372Z] <<< HTTP RESPONSE 200
+ Mon Apr 02 2018 23:18:09 GMT+0200 (CEST)
+[debug] [2018-04-02T21:18:10.497Z] <<< HTTP RESPONSE 200
 [info] 
 [info] === Serving from '/home/robert/Documentos/uni/4/ModAvBBDD/Practica/p2/firebase-proyect'...
 [info] 
-[debug] [2018-03-24T19:53:24.374Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/970183913523/clients/_:getWebAppConfig  
+[debug] [2018-04-02T21:18:10.499Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/970183913523/clients/_:getWebAppConfig  
   
- Sat Mar 24 2018 20:53:24 GMT+0100 (CET)
-[debug] [2018-03-24T19:53:24.927Z] <<< HTTP RESPONSE 200
+ Mon Apr 02 2018 23:18:10 GMT+0200 (CEST)
+[debug] [2018-04-02T21:18:10.976Z] <<< HTTP RESPONSE 200
 [info] i  hosting: Serving hosting files from: public
 [info] ✔  hosting: Local server: http://localhost:5000
 
-[debug] [2018-03-25T14:06:14.306Z] ----------------------------------------------------------------------
-[debug] [2018-03-25T14:06:14.308Z] Command:       /usr/bin/node /usr/local/bin/firebase serve
-[debug] [2018-03-25T14:06:14.309Z] CLI Version:   3.17.6
-[debug] [2018-03-25T14:06:14.309Z] Platform:      linux
-[debug] [2018-03-25T14:06:14.309Z] Node Version:  v9.8.0
-[debug] [2018-03-25T14:06:14.309Z] Time:          Sun Mar 25 2018 16:06:14 GMT+0200 (CEST)
-[debug] [2018-03-25T14:06:14.309Z] ----------------------------------------------------------------------
+[debug] [2018-04-03T15:49:26.421Z] ----------------------------------------------------------------------
+[debug] [2018-04-03T15:49:26.424Z] Command:       /usr/bin/node /usr/local/bin/firebase serve
+[debug] [2018-04-03T15:49:26.425Z] CLI Version:   3.17.7
+[debug] [2018-04-03T15:49:26.425Z] Platform:      linux
+[debug] [2018-04-03T15:49:26.425Z] Node Version:  v9.8.0
+[debug] [2018-04-03T15:49:26.425Z] Time:          Tue Apr 03 2018 17:49:26 GMT+0200 (CEST)
+[debug] [2018-04-03T15:49:26.425Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2018-03-25T14:06:14.318Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-03-25T14:06:14.318Z] > authorizing via signed-in user
-[debug] [2018-03-25T14:06:14.320Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
-[debug] [2018-03-25T14:06:14.320Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+[debug] [2018-04-03T15:49:26.434Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-04-03T15:49:26.435Z] > authorizing via signed-in user
+[debug] [2018-04-03T15:49:26.436Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-04-03T15:49:26.436Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
  { refresh_token: '1/5aqPWxcSaCwWqPX0YyJiLMmUjSVzuwEqUCTsEg3sFtY',
   client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
   client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
   grant_type: 'refresh_token',
   scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
- Sun Mar 25 2018 16:06:14 GMT+0200 (CEST)
-[debug] [2018-03-25T14:06:14.534Z] <<< HTTP RESPONSE 200
-[debug] [2018-03-25T14:06:14.540Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/practica2-93618  
+ Tue Apr 03 2018 17:49:26 GMT+0200 (CEST)
+[debug] [2018-04-03T15:49:26.584Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-03T15:49:26.591Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/practica2-93618  
   
- Sun Mar 25 2018 16:06:14 GMT+0200 (CEST)
-[debug] [2018-03-25T14:06:15.332Z] <<< HTTP RESPONSE 200
-[debug] [2018-03-25T14:06:15.334Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/practica2-93618/tokens  
+ Tue Apr 03 2018 17:49:26 GMT+0200 (CEST)
+[debug] [2018-04-03T15:49:27.288Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-03T15:49:27.289Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/practica2-93618/tokens  
   
- Sun Mar 25 2018 16:06:15 GMT+0200 (CEST)
-[debug] [2018-03-25T14:06:16.163Z] <<< HTTP RESPONSE 200
-[debug] [2018-03-25T14:06:16.166Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/practica2-93618  
+ Tue Apr 03 2018 17:49:27 GMT+0200 (CEST)
+[debug] [2018-04-03T15:49:27.892Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-03T15:49:27.895Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/practica2-93618  
   
- Sun Mar 25 2018 16:06:16 GMT+0200 (CEST)
-[debug] [2018-03-25T14:06:16.964Z] <<< HTTP RESPONSE 200
+ Tue Apr 03 2018 17:49:27 GMT+0200 (CEST)
+[debug] [2018-04-03T15:49:28.711Z] <<< HTTP RESPONSE 200
 [info] 
 [info] === Serving from '/home/robert/Documentos/uni/4/ModAvBBDD/Practica/p2/firebase-proyect'...
 [info] 
-[debug] [2018-03-25T14:06:16.968Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/970183913523/clients/_:getWebAppConfig  
+[debug] [2018-04-03T15:49:28.715Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/970183913523/clients/_:getWebAppConfig  
   
- Sun Mar 25 2018 16:06:16 GMT+0200 (CEST)
-[debug] [2018-03-25T14:06:17.434Z] <<< HTTP RESPONSE 200
+ Tue Apr 03 2018 17:49:28 GMT+0200 (CEST)
+[debug] [2018-04-03T15:49:29.228Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+
+[debug] [2018-04-03T17:57:13.978Z] ----------------------------------------------------------------------
+[debug] [2018-04-03T17:57:13.981Z] Command:       /usr/bin/node /usr/local/bin/firebase serve
+[debug] [2018-04-03T17:57:13.981Z] CLI Version:   3.17.7
+[debug] [2018-04-03T17:57:13.981Z] Platform:      linux
+[debug] [2018-04-03T17:57:13.981Z] Node Version:  v9.8.0
+[debug] [2018-04-03T17:57:13.981Z] Time:          Tue Apr 03 2018 19:57:13 GMT+0200 (CEST)
+[debug] [2018-04-03T17:57:13.981Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-04-03T17:57:13.991Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-04-03T17:57:13.991Z] > authorizing via signed-in user
+[debug] [2018-04-03T17:57:13.992Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-04-03T17:57:13.993Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/5aqPWxcSaCwWqPX0YyJiLMmUjSVzuwEqUCTsEg3sFtY',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Tue Apr 03 2018 19:57:13 GMT+0200 (CEST)
+[debug] [2018-04-03T17:57:14.203Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-03T17:57:14.210Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/practica2-93618  
+  
+ Tue Apr 03 2018 19:57:14 GMT+0200 (CEST)
+[debug] [2018-04-03T17:57:14.969Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-03T17:57:14.970Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/practica2-93618/tokens  
+  
+ Tue Apr 03 2018 19:57:14 GMT+0200 (CEST)
+[debug] [2018-04-03T17:57:15.778Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-03T17:57:15.781Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/practica2-93618  
+  
+ Tue Apr 03 2018 19:57:15 GMT+0200 (CEST)
+[debug] [2018-04-03T17:57:16.650Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/home/robert/Documentos/uni/4/ModAvBBDD/Practica/p2/firebase-proyect'...
+[info] 
+[debug] [2018-04-03T17:57:16.654Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/970183913523/clients/_:getWebAppConfig  
+  
+ Tue Apr 03 2018 19:57:16 GMT+0200 (CEST)
+[debug] [2018-04-03T17:57:17.148Z] <<< HTTP RESPONSE 200
 [info] i  hosting: Serving hosting files from: public
 [info] ✔  hosting: Local server: http://localhost:5000
 

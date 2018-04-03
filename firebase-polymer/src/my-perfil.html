@@ -99,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <!--<div slot="suffix">@email.com</div>-->
                     </paper-input>
                     <form>
-                        <p><paper-checkbox id="check" on-click="toggleChecked" checked="{{checked}}">Perfil público</paper-checkbox></p>
+                        <p><paper-checkbox id="check" on-click="toggleChecked" >Perfil público</paper-checkbox></p>
                         <paper-button on-click="modificar" class="mdl-button mdl-js-button mdl-button--raised" raised>Guardar</paper-button>
 
                     </form>
@@ -119,18 +119,19 @@ class MyPerfil extends Polymer.Element {
         return {
             user: {
                 type: Object,
+                observer: '_publico'
 
             },
             usuario: {
                 type: Object,
                 observer: '_publico'
-            },
+            }/*,
             checked: {
                 type: String,
                 notify: true,
                 reflectToAttribute: true,
-                value: ""
-            },
+                //value: ""
+            }*/,
             statusKnown: {
                 type: Object
             }
@@ -141,21 +142,23 @@ class MyPerfil extends Polymer.Element {
 
     }
     _publico() {
-        if (this.usuario.privado === undefined || this.usuario.privado) { //es privado
-            this.checked = ""
+        if (this.usuario.publico === undefined || !this.usuario.publico) { //es publico
+            this.$.check.checked = false;
         } else {
-            this.checked = "checked"
+            this.$.check.checked = true;
         }
     }
     modificar() {
-        var privado;
-        if (this.checked === 'checked') {
+        var publico = this.$.check.checked;
+       /* if (this.$.check.checked) {
             privado = false;
         } else {
             privado = true;
-        }
+        }*/
+        console.log('checked: '+this.$.check.checked)
+        console.log('privado: '+publico)
         firebase.database().ref('usuarios/' + this.user.uid).update({
-            privado: privado
+            publico: publico
         });
         this.$.toast.open();
     }

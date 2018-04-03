@@ -26,9 +26,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 
-<link rel="import" href="/bower_components/bwt-datatable/bwt-datatable.html">
 
 
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/vaadin-checkbox/vaadin-checkbox.html">
+<link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 
 <link rel="import" href="icon-toggle.html">
 
@@ -39,23 +42,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             :host {
                 display: block;
 
-                padding: 10px;
-                font-family: sans-serif;
-                --icon-toggle-color: green;
-                --icon-toggle-outline-color: green;
-                --icon-toggle-pressed-color: white;
-                --iron-icon-width: 40px;
-                --iron-icon-height: 40px;
-                --visible: none;
-            }
-            .contenedor {
-                display: var(--visible);
-                max-width: 500px;
-                margin: auto;
-            }
 
-            paper-textarea {
-                max-width: 500px;
             }
 
             paper-toast {
@@ -63,26 +50,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 margin-left: calc(50vw - 150px);
             }
 
-            iron-list {
-                /*padding-top: 148px;
-                margin-top: 64px;*/
-                padding-bottom: 16px;
-            }
-
-            .item {
-                @apply --layout-horizontal;
-                padding: 20px;
-                border-radius: 8px;
-                background-color: white;
-                border: 1px solid #ddd;
-                max-width: 800px;
-                margin: 16px auto 0 auto;
-            }
-
-            .item:focus {
-                outline: 0;
-                border-color: #333;
-            }
 
             .avatar {
                 height: 40px;
@@ -97,22 +64,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 @apply --layout-flex;
                 @apply --layout-vertical;
             }
-
-            .primary {
-                font-size: 16px;
-                font-weight: bold;
+            .vaadin-demo-input[readonly] {
+                border: 2px solid transparent;
+                pointer-events: none;
             }
 
-            .secondary {
-                font-size: 14px;
-            }
-
-            .dim {
-                color: gray;
-            }
-
-            .spacer {
-                @apply --layout-flex;
+            .vaadin-demo-input {
+                font: inherit;
             }
         </style>
 
@@ -144,26 +102,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <h2>Concursantes</h2>
 
             <p>
-            <paper-datatable id="paperDatatable" data="{{dataConcursantes}}">
-                <paper-datatable-column header="Nombre" property="nombre" type="String" style="width:99%;" sortable>
-                    <template>
-                        <div>
-                            <img src="[[item.imagen]]" style="width:32px;height:32px;border-radius:16px;vertical-align: middle;margin-right:4px;">
-                            <span style="vertical-align:middle;">[[item.nombre]]</span>
-                        </div>
+                <!--<vaadin-checkbox checked="{{editing}}" style="margin-bottom: 20px">Enable Editing</vaadin-checkbox>-->
+
+            <vaadin-grid id="grid" aria-label="Two-way Binding Example" items="[[dataConcursantes]]">
+
+                <vaadin-grid-column>
+                    <template class="header">
+                        <vaadin-grid-sorter path="nombre">First Name</vaadin-grid-sorter>
                     </template>
-                </paper-datatable-column>
-                <paper-datatable-column header="Apellidos" property="apellidos" type="String" align="right" format-value="[[toFixedOne]]" sortable editable></paper-datatable-column>
-                <paper-datatable-column header="Email" property="correo" type="String" align="right" sortable ></paper-datatable-column>
+                    <template>
+                        <iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image>[[item.nombre]]</template>
+                </vaadin-grid-column>
 
-                <template is="dom-if" if="{{_isEqualTo(usuario.admin,'true')}}">
-                    <paper-datatable-column  header="Puntuación" property="puntuacion" default="0" type="Number" align="right"  sortable editable></paper-datatable-column>
-                </template>
-                <template is="dom-if" if="{{_isEqualTo(usuario.admin,'false')}}">
-                    <paper-datatable-column  header="Puntuación" property="puntuacion" default="0" type="Number" align="right"  sortable></paper-datatable-column>
-                </template>
+                <vaadin-grid-column>
+                    <template class="header">Last Name</template>
+                    <template>
+                        [[item.apellidos]]
+                    </template>
+                </vaadin-grid-column>
 
-            </paper-datatable>
+                <vaadin-grid-column width="200px">
+                    <template class="header">Email</template>
+                    <template>[[item.correo]]</template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                    <template class="header">Puntuación</template>
+                    <template>
+                        <input class="vaadin-demo-input" value="{{item.puntuacion::input}}" readonly$="{{_isEqualTo(usuario.admin,'false')}}">
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid>
             </p>
 
             <template is="dom-if" if="{{_isEqualTo(usuario.admin,'true')}}">
@@ -203,17 +172,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     },
                 }
             }
+
             guardar() {
-                console.log('object' + JSON.stringify(this.dataConcursantes))
-                /*this.dataConcursantes.forEach(function (arrayItem)
-                {
-                    arrayItem['puntuacion'] = 0;
-                    console.log(arrayItem.puntuacion);
-                    /*firebase.database().ref('puntuaciones_programa/' + this.idPrograma + '/' + arrayItem.$key).update({
-                        puntuacion: privado
-                    });*/
-                //});
-                console.log('object' + JSON.stringify(this.$.paperDatatable.data))
+                var idProg = this.idPrograma;
+                var arr = this.dataConcursantes;
+
+                const arrayToObject = (array, keyField) =>
+                    array.reduce((obj, item) => {
+                        obj[item[keyField]] = item
+                        console.log(obj[item[keyField]])
+                        return obj
+                    }, {})
+                const obj = arrayToObject(arr, "$key")
+                console.log(obj)
+
+
+                console.log('dataConcursantes' + JSON.stringify(this.dataConcursantes))
+                console.log('object' + JSON.stringify(this.$.grid.items))
+//                this.dataConcursantes.forEach(function (arrayItem)
+//                {
+//                    arrayItem['puntuacion'] = 0;
+//                    console.log(arrayItem.puntuacion);
+                firebase.database().ref('puntuaciones_programas/' + idProg).set(
+                        obj
+                        );
+                //firebase.database().ref('puntuaciones_programa/' + idProg ).set(peopleObject);
+//                });
 
             }
             _idPrograma() {
@@ -222,7 +206,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             list() {
                 console.log(JSON.stringify(this.dataConcursantes))
-                this.notifyPath('dataConcursantes');
+                // this.notifyPath('dataConcursantes');
             }
 
             _message(pulsado) {
