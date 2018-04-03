@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 
 <script src="../scripts/main.js"></script>
@@ -107,10 +108,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <div>
                             <paper-input always-float-label label="Nombre" value="{{nombre}}" required></paper-input>
                             <paper-input always-float-label label="Apellidos" value="{{apellidos}}" required></paper-input>
-                            <paper-input always-float-label label="Correo" value="{{correo}}" required>
-                                <iron-icon icon="mail" slot="prefix"></iron-icon>
-                                <!--<div slot="suffix">@email.com</div>-->
-                            </paper-input>
+                            <paper-input always-float-label label="Precio" value="{{precio}}" required></paper-input>
+                            <paper-textarea cols="30" always-float-label label="Descripción" value="{{desc}}" required></paper-textarea>
                             <paper-input type="file" id="inputFile" files="{{imagen}}">Selecciona la imagen</paper-input>
 
                             <paper-button on-click="insertar" class="mdl-button mdl-js-button mdl-button--raised" raised>Guardar</paper-button>
@@ -136,7 +135,8 @@ class InsertarConcursante extends Polymer.Element {
             },
             nombre: {type: String},
             apellidos: {type: String},
-            correo: {type: String},
+            precio: {type: Number},
+            desc: {type: String},
             imagen: {type: Object},
             usuario: {
                 type: Object
@@ -156,23 +156,36 @@ class InsertarConcursante extends Polymer.Element {
         if (this.$.ironForm.validate()) {
             var nombre = this.nombre;
             var apellidos = this.apellidos;
-            var correo = this.correo;
+            var precio = this.precio;
+            var desc = this.desc;
             var formulario = this.$.ironForm;
             var toast = this.$.toast;
+            if(isNaN(precio)){    
+                alert('Inserte un número en el precio');
+                return;
+                }
+            if (precio>50 || precio<0) {
+            alert('Inserte un precio entre 1 y 50');
+                return;
+                }
             this.insertarImagen(function insertarRegistro(urlImg) {
                 var claveConcursante = firebase.database().ref().child('concursantes').push().key;
                 console.log('clave: ' + claveConcursante)
                 console.log('nombre: ' + nombre)
+                console.log('precio: ' + precio)
                 console.log('urlimg: ' + urlImg)
                 firebase.database().ref('concursantes/' + claveConcursante).set({
                     nombre: nombre,
                     apellidos: apellidos,
-                    correo: correo,
+                    precio: precio,
+                    descripción: desc,
                     imagen: urlImg
                 });
-                formulario.reset();
-                toast.open();
+            
+                toast.open(); 
             });
+            formulario.reset();
+            
         }
     }
 
