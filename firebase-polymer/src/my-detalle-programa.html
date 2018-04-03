@@ -175,29 +175,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             guardar() {
                 var idProg = this.idPrograma;
-                var arr = this.dataConcursantes;
 
+                //Transforma array de objetos a objeto
                 const arrayToObject = (array, keyField) =>
                     array.reduce((obj, item) => {
                         obj[item[keyField]] = item
-                        console.log(obj[item[keyField]])
+                        
                         return obj
                     }, {})
-                const obj = arrayToObject(arr, "$key")
-                console.log(obj)
+                const obj = arrayToObject(this.dataConcursantes, "$key")
 
+                //Elimina el campo $key
+                for (const [key, value] of Object.entries(obj)) {
+                    delete value["$key"];
+                }
 
-                console.log('dataConcursantes' + JSON.stringify(this.dataConcursantes))
-                console.log('object' + JSON.stringify(this.$.grid.items))
-//                this.dataConcursantes.forEach(function (arrayItem)
-//                {
-//                    arrayItem['puntuacion'] = 0;
-//                    console.log(arrayItem.puntuacion);
-                firebase.database().ref('puntuaciones_programas/' + idProg).set(
+                firebase.database().ref('puntuaciones_programas/' + idProg).update(
                         obj
                         );
-                //firebase.database().ref('puntuaciones_programa/' + idProg ).set(peopleObject);
-//                });
 
             }
             _idPrograma() {

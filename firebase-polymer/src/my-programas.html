@@ -204,7 +204,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 <paper-button id-programa="[[item.$key]]" on-click="detalles" >Ver</paper-button>
                             </a>
                             <paper-button id-programa="[[item.$key]]" on-click="borrar" >Borrar</paper-button>
-                            <paper-button on-click="ver" >ver</paper-button>
                         </div>
                     </div>
                 </template>
@@ -240,17 +239,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         type: Object
                     },
                 }
-            }
-
-            ver() {
-                console.log(this.dataConcursantes)
-                console.log(this.dataConcursantesArray)
-                var obj = this.dataConcursantes;
-                for (const [key, value] of Object.entries(obj)) {
-                    console.log(`key: ${key}, value: ${value}`)
-                    value['puntuacion'] = 0;
-                }
-                console.log(obj)
             }
 
             detalles(e) {
