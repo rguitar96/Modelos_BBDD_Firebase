@@ -41,16 +41,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <style include="shared-styles">
             :host {
                 display: block;
-
-
             }
-
             paper-toast {
                 width: 300px;
                 margin-left: calc(50vw - 150px);
             }
-
-
             .avatar {
                 height: 40px;
                 width: 40px;
@@ -58,7 +53,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 box-sizing: border-box;
                 background-color: #DDD;
             }
-
             .pad {
                 padding: 0 16px;
                 @apply --layout-flex;
@@ -68,7 +62,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 border: 2px solid transparent;
                 pointer-events: none;
             }
-
             .vaadin-demo-input {
                 font: inherit;
             }
@@ -148,7 +141,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             static get is() {
                 return 'my-detalle-programa';
             }
-
             static get properties() {
                 return {
                     idPrograma: {
@@ -172,10 +164,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     },
                 }
             }
-
             guardar() {
                 var idProg = this.idPrograma;
-
                 //Transforma array de objetos a objeto
                 const arrayToObject = (array, keyField) =>
                     array.reduce((obj, item) => {
@@ -184,26 +174,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         return obj
                     }, {})
                 const obj = arrayToObject(this.dataConcursantes, "$key")
-
                 //Elimina el campo $key
                 for (const [key, value] of Object.entries(obj)) {
                     delete value["$key"];
                 }
-
                 firebase.database().ref('puntuaciones_programas/' + idProg).update(
                         obj
                         );
-
             }
             _idPrograma() {
                 console.log('id programa: ' + this.idPrograma)
             }
-
             list() {
                 console.log(JSON.stringify(this.dataConcursantes))
                 // this.notifyPath('dataConcursantes');
             }
-
             _message(pulsado) {
                 if (!pulsado) {
                     this.updateStyles({
@@ -217,13 +202,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     return 'Nuevo programa';
                 }
             }
-
             borrar(e) {
                 var clavePrograma = e.model.get('item.$key');
                 firebase.database().ref('programas/' + clavePrograma).remove();
                 this.$.toastBorrar.open();
             }
-
             insertar() {
                 if (this.$.ironForm.validate()) {
                     var nombre = this.nombre;
@@ -245,28 +228,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     });
                 }
             }
-
             insertarImagen(callback) {
                 var storageRef = firebase.storage().ref();
-
                 var files = this.$.inputFile.inputElement.inputElement.files;
-
                 if (!files.length) {
                     alert('Please select a file!');
                     return;
                 }
-
                 var file = files[0];
-
                 var metadata = {
                     'contentType': file.type
                 };
-
                 var urlImg = '';
-
                 // Upload file and metadata to the object 'images/mountains.jpg'
                 var uploadTask = storageRef.child('images/' + file.name).put(file, metadata);
-
 // Listen for state changes, errors, and completion of the upload.
                 uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
                         function (snapshot) {
@@ -282,18 +257,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                     break;
                             }
                         }, function (error) {
-
                     // A full list of error codes is available at
                     // https://firebase.google.com/docs/storage/web/handle-errors
                     switch (error.code) {
                         case 'storage/unauthorized':
                             // User doesn't have permission to access the object
                             break;
-
                         case 'storage/canceled':
                             // User canceled the upload
                             break;
-
                         case 'storage/unknown':
                             // Unknown error occurred, inspect error.serverResponse
                             break;
@@ -304,17 +276,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     urlImg = downloadURL;
                     console.log('urlimg: ' + urlImg);
                     callback(urlImg);
-
                 });
                 return urlImg;
             }
-
             _isEqualTo(title, string) {
                 var comp = String(title) === string;
                 return comp;
             }
         }
-
         window.customElements.define(MyDetallePrograma.is, MyDetallePrograma);
     </script>
 </dom-module>
