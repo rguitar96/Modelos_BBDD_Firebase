@@ -1,0 +1,54 @@
+<!-- Load the Polymer.Element base class -->
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="hola-element.html">
+<link rel="import" href="demo-element.html">
+<link rel="import" href="icon-toggle.html">
+
+<link rel="import" href="login.html">
+
+<dom-module id="my-inicio">
+  <!-- Defines the element's style and local DOM -->
+  <template>
+    <style>
+      :host {
+        display: block;
+
+        padding: 16px;
+      }
+      .imagen {
+    display: flex;    
+    flex-direction: row;
+    aling-items: center;    
+    justify-content: center;
+      }
+    
+    .TextoInicio {
+      text-align:center;
+}
+    </style>
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="icon-toggle.html">
+
+
+    <div class="imagen">
+            <img src="../images/ot.jpg" alt="Logotipo OT" width="800" height="500">
+            
+        </div>
+        
+        <div class="TextoInicio">
+            <p>
+                ¡Bienvenidos a nuestro portal de Operación Triunfo!
+            </p>            
+        </div>
+  </template>
+  <script>
+    // Your new element extends the Polymer.Element base class
+    class MyInicio extends Polymer.Element {
+      static get is() { return 'my-inicio'; }
+    }
+    //Now, register your new custom element so the browser can use it
+    customElements.define(MyInicio.is, MyInicio);
+  </script>
+</dom-module>
