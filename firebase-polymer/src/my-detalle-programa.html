@@ -101,14 +101,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                 <vaadin-grid-column>
                     <template class="header">
-                        <vaadin-grid-sorter path="nombre">First Name</vaadin-grid-sorter>
+                        <vaadin-grid-sorter path="nombre">Nombre</vaadin-grid-sorter>
                     </template>
                     <template>
                         <iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image>[[item.nombre]]</template>
                 </vaadin-grid-column>
 
                 <vaadin-grid-column>
-                    <template class="header">Last Name</template>
+                    <template class="header">Apellidos</template>
                     <template>
                         [[item.apellidos]]
                     </template>
@@ -166,21 +166,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             guardar() {
                 var idProg = this.idPrograma;
+                console.log('datos Concursantes:')
+                console.log(this.dataConcursantes)
+                var data = JSON.parse(JSON.stringify(this.dataConcursantes));
                 //Transforma array de objetos a objeto
-                const arrayToObject = (array, keyField) =>
+                var arrayToObject = (array, keyField) =>
                     array.reduce((obj, item) => {
-                        obj[item[keyField]] = item
-                        
-                        return obj
-                    }, {})
-                const obj = arrayToObject(this.dataConcursantes, "$key")
+                        obj[item[keyField]] = item;
+
+                        return obj;
+                    }, {});
+
+                var obj = arrayToObject(data, "$key");
+                console.log('arr:');
+                console.log(obj);
                 //Elimina el campo $key
-                for (const [key, value] of Object.entries(obj)) {
-                    delete value["$key"];
+                var i;
+                for (i in obj) {
+                    //delete value["$key"];
+                    if (obj[i].$key !== undefined){
+                        delete obj[i].$key;
+                    }
                 }
+                console.log('array obj:')
+                console.log(obj)
+                //delete obj;
                 firebase.database().ref('puntuaciones_programas/' + idProg).update(
-                        obj
-                        );
+                 obj
+                 );
             }
             _idPrograma() {
                 console.log('id programa: ' + this.idPrograma)
