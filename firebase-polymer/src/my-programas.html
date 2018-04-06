@@ -124,10 +124,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
         </firebase-auth>
-        <!--<firebase-document
-            path="/programas"
-            data="{{dataProgramas}}">
-        </firebase-document>-->
 
         <firebase-document
             path="/usuarios/[[user.uid]]"
@@ -136,6 +132,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <firebase-document
             path="/concursantes"
             data="{{dataConcursantes}}">
+        </firebase-document>
+        <firebase-document
+            path="/duos"
+            data="{{dataDuos}}">
         </firebase-document>
         <firebase-query
             path="/programas"
@@ -266,6 +266,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             borrar(e) {
                 var clavePrograma = e.model.get('item.$key');
                 firebase.database().ref('programas/' + clavePrograma).remove();
+                firebase.database().ref('puntuaciones_programas/' + clavePrograma).remove();
                 this.$.toastBorrar.open();
             }
 
@@ -276,7 +277,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     var formulario = this.$.ironForm;
                     var toast = this.$.toast;
                     var instancia = this;
-                    console.log(this.dataConcursantes)
+                    console.log(this.dataDuos)
                     this.insertarImagen(function insertarRegistro(urlImg) {
                         var clavePrograma = firebase.database().ref().child('programas').push().key;
                         firebase.database().ref('programas/' + clavePrograma).set({
@@ -284,17 +285,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             descripcion: descripcion,
                             imagen: urlImg
                         });
-                        
+
                         var obj = instancia.dataConcursantes;
-                        for (const [key, value] of Object.entries(obj)) {                            
-                            value['puntuacion'] = 0;
+                        for (const [key, value] of Object.entries(obj)) {
+                            value['precio'] = 0;
                         }
-                        firebase.database().ref('puntuaciones_programas/' + clavePrograma).set(
-                                obj
-                                );
-                        formulario.reset();
+                        firebase.database().ref('puntuaciones_programas/' + clavePrograma + '/concursantes').set(obj);
+
+                        obj = instancia.dataDuos;
+                        for (const [key, value] of Object.entries(obj)) {
+                            value['precio'] = 0;
+                        }
+                        firebase.database().ref('puntuaciones_programas/' + clavePrograma + '/duos').set(obj);
                         toast.open();
-                        console.log('instancia: ' + instancia);
+                        formulario.reset();
+
                         instancia.list();
                     });
                 }

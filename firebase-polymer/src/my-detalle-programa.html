@@ -41,7 +41,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <style include="shared-styles">
             :host {
                 display: block;
+                align-items: center;
             }
+            .contenedor {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .contenedor div {
+                flex: 1 1 200px;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: white;
+                border: 1px solid #ddd;
+                margin: 5px;
+            }
+
             paper-toast {
                 width: 300px;
                 margin-left: calc(50vw - 150px);
@@ -78,61 +93,105 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             path="/usuarios/[[user.uid]]"
             data="{{usuario}}">
         </firebase-document>
+        <firebase-document
+            path="/programas/{{idPrograma}}"
+            data="{{programa}}">
+        </firebase-document>
+        <firebase-document
+            path="/concursantes"
+            data="{{objConcursantes}}">
+        </firebase-document>
+        <firebase-document
+            path="/duos"
+            data="{{objDuos}}">
+        </firebase-document>
+        <firebase-document
+            path="/puntuaciones_programas"
+            data="{{objPuntuacionesProgramas}}">
+        </firebase-document>
+        <firebase-document
+            path="/puntuaciones_programas"
+            data="{{objPuntuacionesDuos}}">
+        </firebase-document>
         <firebase-query
-            path="/puntuaciones_programas/{{idPrograma}}"
+            path="/puntuaciones_programas/{{idPrograma}}/concursantes"
             data="{{dataConcursantes}}">
         </firebase-query>
-
-
+        <firebase-query
+            path="/puntuaciones_programas/{{idPrograma}}/duos"
+            data="{{dataDuos}}">
+        </firebase-query>
 
         <paper-toast id="toast" text="Registro insertado"></paper-toast>
         <paper-toast id="toastBorrar" text="Registro borrado"></paper-toast>
         <div class="card">
-            <!--<div class="circle">2</div>-->
-            <h1>Programa</h1>
+            <h1>{{programa.nombre}}</h1>
+            <div class="contenedor">
+                <div class="izquierda">
+                    <!--<div class="circle">2</div>-->
 
 
-            <h2>Concursantes</h2>
+                    <h2>Concursantes</h2>
 
+                    <p>
+                        <!--<vaadin-checkbox checked="{{editing}}" style="margin-bottom: 20px">Enable Editing</vaadin-checkbox>-->
+
+                    <vaadin-grid id="grid" aria-label="Two-way Binding Example" items="[[dataConcursantes]]">
+
+                        <vaadin-grid-column>
+                            <template class="header">
+                                <vaadin-grid-sorter path="nombre">Nombre</vaadin-grid-sorter>
+                            </template>
+                            <template>
+                                <p><iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image>[[item.nombre]] [[item.apellidos]]</p>
+                            </template>
+                        </vaadin-grid-column>
+
+
+                        <vaadin-grid-column flexGrow="2" width="30px">
+                            <template class="header">Puntuación</template>
+                            <template>
+                                <input class="vaadin-demo-input" value="{{item.precio::input}}" readonly$="{{_isEqualTo(usuario.admin,'false')}}">
+                            </template>
+                        </vaadin-grid-column>
+                    </vaadin-grid>
+                    </p>
+
+
+
+
+                </div>
+                <div class="derecha">
+                    <h2>Duos</h2>
+
+                    <vaadin-grid id="grid" aria-label="Two-way Binding Example" items="[[dataDuos]]">
+
+                        <vaadin-grid-column>
+                            <template class="header">
+                                <vaadin-grid-sorter path="nombre">Nombre</vaadin-grid-sorter>
+                            </template>
+                            <template>
+                                <p><iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image> [[item.nombre]]</p>
+                                [[item.integrante1]] y [[item.integrante2]]
+                            </template>
+
+                        </vaadin-grid-column>
+
+                        <vaadin-grid-column flexGrow="0.5" width="30px">
+                            <template class="header">Puntuación</template>
+                            <template>
+                                <input class="vaadin-demo-input" value="{{item.precio::input}}" readonly$="{{_isEqualTo(usuario.admin,'false')}}">
+                            </template>
+                        </vaadin-grid-column>
+                    </vaadin-grid>
+
+                </div>
+            </div>
             <p>
-                <!--<vaadin-checkbox checked="{{editing}}" style="margin-bottom: 20px">Enable Editing</vaadin-checkbox>-->
-
-            <vaadin-grid id="grid" aria-label="Two-way Binding Example" items="[[dataConcursantes]]">
-
-                <vaadin-grid-column>
-                    <template class="header">
-                        <vaadin-grid-sorter path="nombre">Nombre</vaadin-grid-sorter>
-                    </template>
-                    <template>
-                        <iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image>[[item.nombre]]</template>
-                </vaadin-grid-column>
-
-                <vaadin-grid-column>
-                    <template class="header">Apellidos</template>
-                    <template>
-                        [[item.apellidos]]
-                    </template>
-                </vaadin-grid-column>
-
-                <vaadin-grid-column width="200px">
-                    <template class="header">Email</template>
-                    <template>[[item.correo]]</template>
-                </vaadin-grid-column>
-
-                <vaadin-grid-column>
-                    <template class="header">Puntuación</template>
-                    <template>
-                        <input class="vaadin-demo-input" value="{{item.puntuacion::input}}" readonly$="{{_isEqualTo(usuario.admin,'false')}}">
-                    </template>
-                </vaadin-grid-column>
-            </vaadin-grid>
+                <template is="dom-if" if="{{_isEqualTo(usuario.admin,'true')}}">
+                    <paper-button on-tap="guardar" raised>Guardar</paper-button>
+                </template>
             </p>
-
-            <template is="dom-if" if="{{_isEqualTo(usuario.admin,'true')}}">
-                <paper-button on-tap="guardar" raised>Guardar</paper-button>
-            </template>
-
-
         </div>
     </template>
 
@@ -166,42 +225,78 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             guardar() {
                 var idProg = this.idPrograma;
-                console.log('datos Concursantes:')
-                console.log(this.dataConcursantes)
+
                 var data = JSON.parse(JSON.stringify(this.dataConcursantes));
                 //Transforma array de objetos a objeto
                 var arrayToObject = (array, keyField) =>
                     array.reduce((obj, item) => {
                         obj[item[keyField]] = item;
-
                         return obj;
                     }, {});
 
                 var obj = arrayToObject(data, "$key");
-                console.log('arr:');
-                console.log(obj);
+
                 //Elimina el campo $key
                 var i;
                 for (i in obj) {
-                    //delete value["$key"];
-                    if (obj[i].$key !== undefined){
-                        delete obj[i].$key;
-                    }
+                    delete obj[i].$key;
                 }
-                console.log('array obj:')
-                console.log(obj)
-                //delete obj;
-                firebase.database().ref('puntuaciones_programas/' + idProg).update(
-                 obj
-                 );
+
+                firebase.database().ref('puntuaciones_programas/' + idProg + '/concursantes').update(obj);
+
+                data = JSON.parse(JSON.stringify(this.dataDuos));
+
+                var obj = arrayToObject(data, "$key");
+
+                //Elimina el campo $key
+                for (i in obj) {
+                    delete obj[i].$key;
+                }
+
+                var instancia = this;
+                firebase.database().ref('puntuaciones_programas/' + idProg + '/duos').update(obj).
+                        then(function onSuccess(res) {
+                            instancia.calculaPuntuacionGlobal(instancia.objConcursantes, instancia.objDuos);
+                        }).catch(function onError(err) {
+                    // do sth, e.g. console.error(err);
+                });
+
+
             }
-            _idPrograma() {
-                console.log('id programa: ' + this.idPrograma)
+            calculaPuntuacionGlobal(objConcursantes, objDuos) {
+                
+                var puntuacionesGlobalesConcursantes = objConcursantes;
+                var puntuacionesGlobalesDuos = objDuos;
+
+                var p, c, primeraVez = true;
+                //Actualiza la puntuacion global de los concursantes
+                for (p in this.objPuntuacionesProgramas) {
+                    for (c in this.objPuntuacionesProgramas[p].concursantes) {
+                        if (primeraVez) {
+                            puntuacionesGlobalesConcursantes[c]["precio"] = 0;
+                        }
+                        puntuacionesGlobalesConcursantes[c]["precio"] +=
+                                Number(this.objPuntuacionesProgramas[p].concursantes[c]["precio"]);
+                    }
+                    primeraVez = false;
+                }
+                primeraVez = true;
+                //Actualiza la puntuación global de los duos
+                for (p in this.objPuntuacionesDuos) {
+                    for (c in this.objPuntuacionesDuos[p].duos) {
+                        if (primeraVez) {
+                            puntuacionesGlobalesDuos[c]["precio"] = 0;
+                        }
+                        puntuacionesGlobalesDuos[c]["precio"] +=
+                                Number(this.objPuntuacionesProgramas[p].duos[c]["precio"]);
+                    }
+                    primeraVez = false;
+                }
+                
+                firebase.database().ref('puntuaciones/concursantes').update(objConcursantes);
+                firebase.database().ref('puntuaciones/duos').update(objDuos);
             }
-            list() {
-                console.log(JSON.stringify(this.dataConcursantes))
-                // this.notifyPath('dataConcursantes');
-            }
+
             _message(pulsado) {
                 if (!pulsado) {
                     this.updateStyles({
