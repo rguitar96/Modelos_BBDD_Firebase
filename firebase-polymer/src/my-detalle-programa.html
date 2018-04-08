@@ -48,6 +48,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 display: flex;
                 flex-wrap: wrap;
             }
+
             .contenedor div {
                 flex: 1 1 200px;
                 padding: 10px;
@@ -56,6 +57,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 border: 1px solid #ddd;
                 margin: 5px;
             }
+
             paper-toast {
                 width: 300px;
                 margin-left: calc(50vw - 150px);
@@ -88,10 +90,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 max-width: 800px;
                 margin: 16px auto 0 auto;
             }
+
             .item:focus {
                 outline: 0;
                 border-color: #333;
             }
+
             .avatar {
                 height: 40px;
                 width: 40px;
@@ -99,22 +103,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 box-sizing: border-box;
                 background-color: #DDD;
             }
+
             .pad {
                 padding: 0 16px;
                 @apply --layout-flex;
                 @apply --layout-vertical;
             }
+
             .primary {
                 font-size: 16px;
                 font-weight: bold;
             }
+
             .secondary {
                 font-size: 14px;
                 clear: both;
             }
+
             .dim {
                 color: gray;
             }
+
             .spacer {
                 @apply --layout-flex;
             }
@@ -321,6 +330,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 var fecha = '' + d.getDate() + ' / ' + d.getMonth() + ' / ' + d.getFullYear();
                 var claveComentario = firebase.database().ref().child('programas').push().key;
                 firebase.database().ref('comentarios/' + this.idPrograma + '/' + claveComentario).update({
+                    id: this.user.uid,
                     nombre: this.usuario.nombre,
                     imagen: this.usuario.imagen,
                     publico: this.usuario.publico,
@@ -330,6 +340,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             guardar() {
                 var idProg = this.idPrograma;
+
                 var data = JSON.parse(JSON.stringify(this.dataConcursantes));
                 //Transforma array de objetos a objeto
                 var arrayToObject = (array, keyField) =>
@@ -337,19 +348,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         obj[item[keyField]] = item;
                         return obj;
                     }, {});
+
                 var obj = arrayToObject(data, "$key");
+
                 //Elimina el campo $key
                 var i;
                 for (i in obj) {
                     delete obj[i].$key;
                 }
+
                 firebase.database().ref('puntuaciones_programas/' + idProg + '/concursantes').update(obj);
+
                 data = JSON.parse(JSON.stringify(this.dataDuos));
+
                 var obj = arrayToObject(data, "$key");
+
                 //Elimina el campo $key
                 for (i in obj) {
                     delete obj[i].$key;
                 }
+
                 var instancia = this;
                 firebase.database().ref('puntuaciones_programas/' + idProg + '/duos').update(obj).
                         then(function onSuccess(res) {
@@ -357,6 +375,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         }).catch(function onError(err) {
                     // do sth, e.g. console.error(err);
                 });
+
+
             }
             //Clacula la puntuación de todos los usuarios
             _cambioPuntuaciones(instancia) {
@@ -366,19 +386,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     var u;
                     for (u in usuarios) {
                         //Si selecciono a un concursante
-                        if (usuarios[u].concursante_selec) {
-                            var puntuacion = puntuaciones.concursantes[usuarios[u].concursante_selec.id].precio * usuarios[u].concursante_selec.creditos;
-                            puntuacion += puntuaciones.duos[usuarios[u].duo_selec.id].precio * usuarios[u].duo_selec.creditos;
+                        if (usuarios[u].concursante_selec1) {
+                            var puntuacion = puntuaciones.concursantes[usuarios[u].concursante_selec1.id].precio;
+                            console.log(puntuaciones.concursantes[usuarios[u].concursante_selec1.id].precio)
+                            puntuacion += puntuaciones.concursantes[usuarios[u].concursante_selec2.id].precio;
+                            console.log(puntuaciones.concursantes[usuarios[u].concursante_selec2.id].precio)
+                            puntuacion += puntuaciones.duos[usuarios[u].duo_selec.id].precio;
+                            console.log('puntuacion: '+ puntuacion)
                             usuarios[u].puntuacion = puntuacion;
                         }
                     }
                     firebase.database().ref('usuarios').update(usuarios);
                 }
             }
+
             //Calcula la puntuación total de todos lo concursantes y duos
             calculaPuntuacionGlobal(objConcursantes, objDuos, instancia) {
+
                 var puntuacionesGlobalesConcursantes = objConcursantes;
                 var puntuacionesGlobalesDuos = objDuos;
+
                 var p, c, primeraVez = true;
                 //Actualiza la puntuacion global de los concursantes
                 for (p in this.objPuntuacionesProgramas) {
@@ -403,6 +430,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     }
                     primeraVez = false;
                 }
+
                 firebase.database().ref('puntuaciones/concursantes').update(objConcursantes);
                 firebase.database().ref('puntuaciones/duos').update(objDuos).
                         then(function onSuccess(res) {
@@ -411,6 +439,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 });
                 ;
             }
+
             _message(pulsado) {
                 if (!pulsado) {
                     this.updateStyles({
