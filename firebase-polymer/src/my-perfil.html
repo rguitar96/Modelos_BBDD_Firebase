@@ -143,6 +143,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <div class="contenedor">
                 <div>
                     <img class="img-perfil" src="{{usuario.imagen}}" alt="Logotipo OT" width="800" height="500">
+                    <div hidden$="[[!usuario.admin]]"><p><b>Administrador</b></p></div>
                 </div>
                 <div>
                     <paper-input always-float-label label="Nombre" value="{{usuario.nombre}}" readonly="readonly"></paper-input>
@@ -173,49 +174,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     </form>
                 </div>
             </div>
-            <div hidden$="[[usuario.concursante_selec1]]">
+            <div hidden$="[[usuario.admin]]">
+                 <div hidden$="[[usuario.concursante_selec1]]">
                  <ins>Selecciona dos concursante y un duo</ins>
-                <div class="contenedorTablas">
-                    <div class="tabla">
-                        <h3>Concursantes</h3>
-                        <vaadin-grid  aria-label="Selection using Active Item Example" id="grid1" items="[[dataConcursantes]]" active-item="{{activeItem1}}" size="200">
+                    <div class="contenedorTablas">
+                        <div class="tabla">
+                            <h3>Concursantes</h3>
+                            <vaadin-grid  aria-label="Selection using Active Item Example" id="grid1" items="[[dataConcursantes]]" size="200">
+                                <vaadin-grid-column>
+                                    <template class="header">Nombre</template>
+                                    <template><div on-click="_selectItem1"><div class="container"><iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image> [[item.nombre]] [[item.apellidos]]</div>
+                                        </div></template>
+                                </vaadin-grid-column>
 
-                            <vaadin-grid-column>
-                                <template class="header">Nombre</template>
-                                <template><div class="container"><iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image> [[item.nombre]] [[item.apellidos]]</div></template>
-                            </vaadin-grid-column>
+                                <vaadin-grid-column width="9em" resizable>
+                                    <template class="header">Precio</template>
+                                    <template><div on-click="_selectItem1">[[item.precio]]</div></template>
+                                </vaadin-grid-column>
+                            </vaadin-grid>
+                        </div>
+                        <div class="tabla">
+                            <h3>Duos</h3>
+                            <vaadin-grid aria-label="Selection using Active Item Example" id="grid2" items="[[dataDuos]]"size="200">
+                                <vaadin-grid-column>
+                                    <template class="header">Nombre</template>
+                                    <template><div on-click="_selectItem2"><div class="container"><iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image> [[item.nombre]]</div>
+                                            [[item.integrante1]] y [[item.integrante2]]</div></template>
+                                </vaadin-grid-column>
+                                <vaadin-grid-column>
+                                    <template class="header">Precio</template>
+                                    <template><div on-click="_selectItem2">[[item.precio]]</div></template>
+                                </vaadin-grid-column>
+                            </vaadin-grid>
+                        </div>
 
-                            <vaadin-grid-column>
-                                <template class="header">Precio</template>
-                                <template>[[item.precio]]</template>
-                            </vaadin-grid-column>
-                        </vaadin-grid>
                     </div>
-                    <div class="tabla">
-                        <h3>Duos</h3>
-                        <vaadin-grid aria-label="Selection using Active Item Example" id="grid2" items="[[dataDuos]]" active-item="{{activeItem2}}" size="200">
-
-                            <vaadin-grid-column>
-                                <template class="header">Nombre</template>
-                                <template><div class="container"><iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image> [[item.nombre]]</div>
-                                    [[item.integrante1]] y [[item.integrante2]]</template>
-                            </vaadin-grid-column>
-                            <vaadin-grid-column>
-                                <template class="header">Precio</template>
-                                <template>[[item.precio]]</template>
-                            </vaadin-grid-column>
-                        </vaadin-grid>
-                    </div>
-
-                </div>
-                <div class="contenedor">
-                    <!--<div>
-                        <img class="img-perfil" src="{{imagen}}" alt="Logotipo OT" width="800" height="500">
-                    </div>-->
-                    <div>
-                        <p><b>Creditos:</b></p>
-                        <paper-input always-float-label label="Creditos restantes" value="{{creditos}}" readonly="readonly"></paper-input>
-                        <p><paper-button on-click="asignar" class="mdl-button mdl-js-button mdl-button--raised" raised>Seleccionar</paper-button></p>
+                    <div class="contenedor">
+                        <!--<div>
+                            <img class="img-perfil" src="{{imagen}}" alt="Logotipo OT" width="800" height="500">
+                        </div>-->
+                        <div>
+                            <p><b>Creditos:</b></p>
+                            <paper-input always-float-label label="Creditos restantes" value="{{creditos}}" readonly="readonly"></paper-input>
+                            <p><paper-button on-click="asignar" class="mdl-button mdl-js-button mdl-button--raised" raised>Seleccionar</paper-button></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -258,55 +260,84 @@ class MyPerfil extends Polymer.Element {
     _compruebaSiSeleccionado(usuario) {
         return usuario.concursante_selec1 === undefined;
     }
-    _activeItemChanged1(item) {
 
-        var posicion = this.$.grid1.selectedItems.indexOf(item);
-        console.log('posicion: ', posicion)
-        console.log('n select:', this.usuariosSeleccionados)
-        /*if (Number(item.creditos) - this.creditos < 0) {
-         alert('Ha superado el máximo de creditos disponibles');
-         } else */{
-            this.creditos -= parseInt(item.precio);
-            console.log('creditos:' + this.creditos)
-            //El elemento ya estaba seleccionado
-            if (posicion > 0) {
-                this.$.grid1.deselectItem(item);
-                this.usuariosSeleccionados--;
-            } else {
-                if (this.usuariosSeleccionados == 0) {
-                    if (item) {
-                        this.$.grid1.selectItem(item);
-                        this.usuariosSeleccionados++;
-                    }
-                } else {
-                    if (this.usuariosSeleccionados < 2) {
-                        this.$.grid1.selectItem(item);
-                        this.usuariosSeleccionados++;
-                    } else {
-                        //this.$.grid1.selectedItems.push(item)
-                        alert('Ya ha seleccionado al máximo de concursantes')
-                    }
-                }
-            }
+    _selectItem1(e) {
+        var posicion = this.$.grid1.selectedItems.indexOf(e.model.item);
+        if (posicion >= 0) {
+            this.creditos += parseInt(this.$.grid1.selectedItems[posicion].precio);
+            this.$.grid1.deselectItem(e.model.item);
+            this.usuariosSeleccionados--;
+            return;
         }
+        if (this.usuariosSeleccionados < 2) {
+            if (this.creditos - parseInt(e.model.item.precio) < 0) {
+                alert('Se superó al máximo de creditos disponibles');
+            }
+            console.log(this.creditos - parseInt(e.model.item.precio))
+            this.$.grid1.selectItem(e.model.item);
+            this.creditos -= parseInt(e.model.item.precio);
+            this.usuariosSeleccionados++;
+        } else {
+            alert('Ya se seleccionó el máximo de concursantes')
+        }
+        console.log(this.$.grid1.selectedItems)
+
+    }
+
+    _selectItem2(e) {
+        if (this.$.grid2.selectedItems[0]) {
+            this.creditos += parseInt(this.$.grid2.selectedItems[0].precio);
+        }
+        if (this.creditos - parseInt(e.model.item.precio) < 0) {
+            alert('Se superó al máximo de creditos disponibles');
+            return;
+        }
+        this.$.grid2.selectedItems = [e.model.item];
+        this.creditos -= parseInt(e.model.item.precio);
+        console.log(this.$.grid2.selectedItems)
+    }
+
+    _activeItemChanged1(item) {
+        console.log(this.activeItem1)
+        console.log(item)
+        /*var posicion = this.$.grid1.selectedItems.indexOf(item);
+         console.log('posicion: ', posicion)
+         console.log('n select:', this.usuariosSeleccionados)
+         /*if (Number(item.creditos) - this.creditos < 0) {
+         alert('Ha superado el máximo de creditos disponibles');
+         } else {
+         this.creditos -= parseInt(item.precio);
+         console.log('creditos:' + this.creditos)
+         //El elemento ya estaba seleccionado
+         if (posicion > 0) {
+         this.$.grid1.deselectItem(item);
+         this.usuariosSeleccionados--;
+         } else {
+         if (this.usuariosSeleccionados == 0) {
+         if (item) {
+         this.$.grid1.selectItem(item);
+         this.usuariosSeleccionados++;
+         }
+         } else {
+         if (this.usuariosSeleccionados < 2) {
+         this.$.grid1.selectItem(item);
+         this.usuariosSeleccionados++;
+         } else {
+         //this.$.grid1.selectedItems.push(item)
+         alert('Ya ha seleccionado al máximo de concursantes')
+         }
+         }
+         }
+         }*/
         //this.$.grid1.selectedItems = item ? [item] : [];
         console.log(this.$.grid1.selectedItems)
     }
-    _activeItemChanged2(item) {
-        console.log(item)
-        if (item.creditos - this.creditos < 0) {
-            alert('Ha superado el máximo de creditos disponibles');
-        }
-        this.creditos -= parseInt(item.precio);
-        this.$.grid2.selectedItems = item ? [item] : [];
-        //this.$.grid2.selectedItems.push(item)
-        console.log(this.$.grid2.selectedItems)
-    }
+
     _funSlider(val1, val2) {
         return (val2 - parseInt(val1));
     }
     asignar() {
-        if ((this.usuariosSeleccionados !== 2) || !this.activeItem2) {
+        if ((this.usuariosSeleccionados !== 2) || !this.$.grid2.selectedItems[0]) {
             alert('Selecciona dos Concursante y un Duo');
         } else {
             console.log(this.$.grid1.selectedItems[0].$key);
@@ -314,7 +345,7 @@ class MyPerfil extends Polymer.Element {
             var instancia = this;
             var puntuacion = this.dataPuntuaciones.concursantes[this.$.grid1.selectedItems[0].$key].precio;
             puntuacion += this.dataPuntuaciones.concursantes[this.$.grid1.selectedItems[1].$key].precio;
-            puntuacion += this.dataPuntuaciones.duos[this.activeItem2.$key].precio;
+            puntuacion += this.dataPuntuaciones.duos[this.$.grid2.selectedItems[0].$key].precio;
 
             firebase.database().ref('usuarios/' + this.user.uid).update({
                 puntuacion: puntuacion,
@@ -331,11 +362,11 @@ class MyPerfil extends Polymer.Element {
                     apellidos: instancia.$.grid1.selectedItems[1].apellidos
                 },
                 duo_selec: {
-                    id: instancia.activeItem2.$key,
-                    nombre: instancia.activeItem2.nombre,
-                    integrante1: instancia.activeItem2.integrante1,
-                    integrante2: instancia.activeItem2.integrante2,
-                    imagen: instancia.activeItem2.imagen
+                    id: instancia.$.grid2.selectedItems[0].$key,
+                    nombre: instancia.$.grid2.selectedItems[0].nombre,
+                    integrante1: instancia.$.grid2.selectedItems[0].integrante1,
+                    integrante2: instancia.$.grid2.selectedItems[0].integrante2,
+                    imagen: instancia.$.grid2.selectedItems[0].imagen
                 }
             });
         }
