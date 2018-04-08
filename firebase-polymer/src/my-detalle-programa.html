@@ -32,6 +32,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/vaadin-checkbox/vaadin-checkbox.html">
 <link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
 <link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-tree-toggle.html">
 
 <link rel="import" href="icon-toggle.html">
 
@@ -80,6 +81,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             .vaadin-demo-input {
                 font: inherit;
             }
+            .item {
+                @apply --layout-horizontal;
+                padding: 20px;
+                border-radius: 8px;
+                background-color: white;
+                border: 1px solid #ddd;
+                max-width: 800px;
+                margin: 16px auto 0 auto;
+            }
+
+            .item:focus {
+                outline: 0;
+                border-color: #333;
+            }
+
+            .avatar {
+                height: 40px;
+                width: 40px;
+                border-radius: 20px;
+                box-sizing: border-box;
+                background-color: #DDD;
+            }
+
+            .pad {
+                padding: 0 16px;
+                @apply --layout-flex;
+                @apply --layout-vertical;
+            }
+
+            .primary {
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .secondary {
+                font-size: 14px;
+            }
+
+            .dim {
+                color: gray;
+            }
+
+            .spacer {
+                @apply --layout-flex;
+            }
         </style>
 
         <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
@@ -92,6 +138,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <firebase-document
             path="/usuarios/[[user.uid]]"
             data="{{usuario}}">
+        </firebase-document>
+        <firebase-document
+            path="/usuarios"
+            data="{{usuarios}}">
+        </firebase-document>
+        <firebase-document
+            path="/puntuaciones"
+            data="{{puntuaciones}}">
         </firebase-document>
         <firebase-document
             path="/programas/{{idPrograma}}"
@@ -115,11 +169,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </firebase-document>
         <firebase-query
             path="/puntuaciones_programas/{{idPrograma}}/concursantes"
+            order-by-child="!precio"
             data="{{dataConcursantes}}">
         </firebase-query>
         <firebase-query
             path="/puntuaciones_programas/{{idPrograma}}/duos"
             data="{{dataDuos}}">
+        </firebase-query>
+        <firebase-query
+            path="/comentarios/{{idPrograma}}"
+            data="{{comentarios}}">
         </firebase-query>
 
         <paper-toast id="toast" text="Registro insertado"></paper-toast>
@@ -151,14 +210,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <vaadin-grid-column flexGrow="2" width="30px">
                             <template class="header">Puntuación</template>
                             <template>
-                                <input class="vaadin-demo-input" value="{{item.precio::input}}" readonly$="{{_isEqualTo(usuario.admin,'false')}}">
+                                <input class="vaadin-demo-input" value="{{item.precio::input}}" type="number" size="10" readonly$="{{_isEqualTo(usuario.admin,'false')}}">
                             </template>
                         </vaadin-grid-column>
                     </vaadin-grid>
                     </p>
-
-
-
 
                 </div>
                 <div class="derecha">
@@ -180,7 +236,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <vaadin-grid-column flexGrow="0.5" width="30px">
                             <template class="header">Puntuación</template>
                             <template>
-                                <input class="vaadin-demo-input" value="{{item.precio::input}}" readonly$="{{_isEqualTo(usuario.admin,'false')}}">
+                                <input class="vaadin-demo-input" value="{{item.precio::input}}" type="number" size="10" readonly$="{{_isEqualTo(usuario.admin,'false')}}">
                             </template>
                         </vaadin-grid-column>
                     </vaadin-grid>
@@ -192,6 +248,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     <paper-button on-tap="guardar" raised>Guardar</paper-button>
                 </template>
             </p>
+
+            <div class="card">
+                <h1>Comentarios</h1>
+                <iron-form id="ironForm">
+                    <form>
+                        <div class="contenedor">
+                            <div>
+                                <paper-textarea rows="4" cols="50" id="textComentario" label="Deja un comentario" value="{{comentario}}" required></paper-textarea>
+
+                                <p><paper-button on-click="_comment" class="mdl-button mdl-js-button mdl-button--raised" raised>Comentar</paper-button></p>
+
+                            </div>
+
+                        </div>
+                    </form>
+                </iron-form>
+                <iron-list items="{{comentarios}}" as="item">
+                    <template>
+                        <div>
+                            <div class="item" tabindex$="[[tabIndex]]">
+                                 <iron-image class="avatar" hidden$=[[!item.publico]] sizing="contain" src="[[item.imagen]]"></iron-image>
+                                <div class="pad">
+                                    <div class="primary" hidden$=[[!item.publico]]>[[item.nombre]]</div>
+                                    <div class="primary" hidden$=[[item.publico]]>Usuario privado</div>
+                                    <div class="secondary">[[item.fecha]]</div>
+                                    <div class="secondary dim">[[_saltosLinea(item.comentario)]]</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </iron-list>
+            </div>
         </div>
     </template>
 
@@ -221,7 +309,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     usuario: {
                         type: Object
                     },
+                    puntuaciones: {
+                        type: Object,
+                        reflectToAttribute: true,
+                        notify: true
+                    }
                 }
+            }
+            _saltosLinea(str) {
+                //str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+                str = str.replace(/(?:\r\n|\r|\n)/g, '\\n');
+                return str;
+            }
+            list() {
+                this.notifyPath('comentarios');
+                console.log(this.comentarios)
+            }
+            _comment() {
+                console.log('coment')
+                console.log(this.comentarios)
+                var d = new Date();
+                var fecha = '' + d.getDate() + ' / ' + d.getMonth() + ' / ' + d.getFullYear();
+                var claveComentario = firebase.database().ref().child('programas').push().key;
+                firebase.database().ref('comentarios/' + this.idPrograma + '/' + claveComentario).update({
+                    nombre: this.usuario.nombre,
+                    imagen: this.usuario.imagen,
+                    publico: this.usuario.publico,
+                    comentario: this.comentario,
+                    fecha: fecha
+                });
             }
             guardar() {
                 var idProg = this.idPrograma;
@@ -256,15 +372,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 var instancia = this;
                 firebase.database().ref('puntuaciones_programas/' + idProg + '/duos').update(obj).
                         then(function onSuccess(res) {
-                            instancia.calculaPuntuacionGlobal(instancia.objConcursantes, instancia.objDuos);
+                            instancia.calculaPuntuacionGlobal(instancia.objConcursantes, instancia.objDuos, instancia);
                         }).catch(function onError(err) {
                     // do sth, e.g. console.error(err);
                 });
 
 
             }
-            calculaPuntuacionGlobal(objConcursantes, objDuos) {
-                
+            //Clacula la puntuación de todos los usuarios
+            _cambioPuntuaciones(instancia) {
+                console.log('cambio puntuaciones')
+                if (this.usuarios !== undefined && this.puntuaciones !== undefined) {
+                    var usuarios = instancia.usuarios;
+                    var puntuaciones = instancia.puntuaciones;
+                    console.log(usuarios)
+                    console.log(puntuaciones)
+                    var u;
+                    for (u in usuarios) {
+                        //Si selecciono a un concursante
+                        if (usuarios[u].concursante_selec) {
+                            var puntuacion = puntuaciones.concursantes[usuarios[u].concursante_selec.id].precio * usuarios[u].concursante_selec.creditos;
+                            console.log(puntuacion)
+                            puntuacion += puntuaciones.duos[usuarios[u].duo_selec.id].precio * usuarios[u].duo_selec.creditos;
+                            console.log(puntuacion)
+                            usuarios[u].puntuacion = puntuacion;
+                        }
+                    }
+                    console.log(usuarios)
+                    firebase.database().ref('usuarios').update(usuarios);
+                }
+            }
+
+            //Calcula la puntuación total de todos lo concursantes y duos
+            calculaPuntuacionGlobal(objConcursantes, objDuos, instancia) {
+
                 var puntuacionesGlobalesConcursantes = objConcursantes;
                 var puntuacionesGlobalesDuos = objDuos;
 
@@ -292,9 +433,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     }
                     primeraVez = false;
                 }
-                
+
                 firebase.database().ref('puntuaciones/concursantes').update(objConcursantes);
-                firebase.database().ref('puntuaciones/duos').update(objDuos);
+                firebase.database().ref('puntuaciones/duos').update(objDuos).
+                        then(function onSuccess(res) {
+                            instancia._cambioPuntuaciones(instancia);
+                        }).catch(function onError(err) {
+                    // do sth, e.g. console.error(err);
+                });
+                ;
+                //instancia.calculaPuntuacionUsuarios();
             }
 
             _message(pulsado) {

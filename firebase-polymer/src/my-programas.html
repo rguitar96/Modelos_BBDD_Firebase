@@ -46,6 +46,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 --iron-icon-width: 40px;
                 --iron-icon-height: 40px;
                 --visible: none;
+
+                
             }
             .contenedor {
                 display: var(--visible);
@@ -69,9 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             iron-list {
-                /*padding-top: 148px;
-                margin-top: 64px;*/
-                padding-bottom: 16px;
+                flex: 1 1 auto;
             }
 
             .item {
@@ -196,7 +196,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <div class="item" tabindex$="[[tabIndex]]">
                              <iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image>
                             <div class="pad">
-                                <div class="primary">[[item.nombre]] [[index]]</div>
+                                <div class="primary">[[item.nombre]]</div>
                                 <!--<div class="secondary">[[item.shortText]]</div>-->
                                 <div class="secondary dim">[[item.descripcion]]</div>
                             </div>
