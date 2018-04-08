@@ -117,6 +117,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             .secondary {
                 font-size: 14px;
+                clear: both;
             }
 
             .dim {
@@ -273,7 +274,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                     <div class="primary" hidden$=[[!item.publico]]>[[item.nombre]]</div>
                                     <div class="primary" hidden$=[[item.publico]]>Usuario privado</div>
                                     <div class="secondary">[[item.fecha]]</div>
-                                    <div class="secondary dim">[[_saltosLinea(item.comentario)]]</div>
+                                    <div class="secondary dim">[[item.comentario]]</div>
                                 </div>
                             </div>
                         </div>
@@ -318,16 +319,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             _saltosLinea(str) {
                 //str = str.replace(/(?:\r\n|\r|\n)/g, '<br />');
-                str = str.replace(/(?:\r\n|\r|\n)/g, '\\n');
+                str = str.replace(/(?:\r\n|\r|\n)/g, '\n');
                 return str;
             }
             list() {
                 this.notifyPath('comentarios');
-                console.log(this.comentarios)
             }
             _comment() {
-                console.log('coment')
-                console.log(this.comentarios)
                 var d = new Date();
                 var fecha = '' + d.getDate() + ' / ' + d.getMonth() + ' / ' + d.getFullYear();
                 var claveComentario = firebase.database().ref().child('programas').push().key;
@@ -381,24 +379,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             //Clacula la puntuación de todos los usuarios
             _cambioPuntuaciones(instancia) {
-                console.log('cambio puntuaciones')
                 if (this.usuarios !== undefined && this.puntuaciones !== undefined) {
                     var usuarios = instancia.usuarios;
                     var puntuaciones = instancia.puntuaciones;
-                    console.log(usuarios)
-                    console.log(puntuaciones)
                     var u;
                     for (u in usuarios) {
                         //Si selecciono a un concursante
                         if (usuarios[u].concursante_selec) {
                             var puntuacion = puntuaciones.concursantes[usuarios[u].concursante_selec.id].precio * usuarios[u].concursante_selec.creditos;
-                            console.log(puntuacion)
                             puntuacion += puntuaciones.duos[usuarios[u].duo_selec.id].precio * usuarios[u].duo_selec.creditos;
-                            console.log(puntuacion)
                             usuarios[u].puntuacion = puntuacion;
                         }
                     }
-                    console.log(usuarios)
                     firebase.database().ref('usuarios').update(usuarios);
                 }
             }
@@ -439,10 +431,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         then(function onSuccess(res) {
                             instancia._cambioPuntuaciones(instancia);
                         }).catch(function onError(err) {
-                    // do sth, e.g. console.error(err);
                 });
                 ;
-                //instancia.calculaPuntuacionUsuarios();
             }
 
             _message(pulsado) {
@@ -479,7 +469,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         });
                         formulario.reset();
                         toast.open();
-                        console.log('instancia: ' + instancia);
                         instancia.list();
                     });
                 }
@@ -530,7 +519,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     // Upload completed successfully, now we can get the download URL
                     var downloadURL = uploadTask.snapshot.downloadURL;
                     urlImg = downloadURL;
-                    console.log('urlimg: ' + urlImg);
                     callback(urlImg);
                 });
                 return urlImg;
