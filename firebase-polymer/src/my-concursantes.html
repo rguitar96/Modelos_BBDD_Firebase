@@ -144,7 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             data="{{dataConcursantes}}">
         </firebase-query>
         <firebase-query
-            path="/concursantes"
+            path="/duos"
             data="{{dataDuos}}">
         </firebase-query>
 
@@ -220,9 +220,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                     <div class="secondary dim">[[item.integrante1]] y [[item.integrante2]]</div>
                                 </div>
                                 <a name="detalle-duo" href="[[rootPath]]detalle-duo">
-                                    <paper-button id-duo="[[item.$key]]" on-click="detalles" >Ver</paper-button>
+                                    <paper-button id-concursante="[[item.$key]]" on-click="detalles" >Ver</paper-button>
                                 </a>
-                                <paper-button id-duo="[[item.$key]]" on-click="borrar" >Borrar</paper-button>
+                                <paper-button id-concursante="[[item.$key]]" on-click="borrar" >Borrar</paper-button>
                             </div>
                         </div>
                     </template>
@@ -404,7 +404,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             borrar(e) {
+                alert();
                 var claveDuo = e.model.get('item.$key');
+                
                 firebase.database().ref('duos/' + claveDuo).remove();
                 this.$.toastBorrar.open();
             }

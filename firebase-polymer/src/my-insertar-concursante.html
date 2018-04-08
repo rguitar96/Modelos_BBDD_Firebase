@@ -109,7 +109,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             <paper-input always-float-label label="Nombre" value="{{nombre}}" required></paper-input>
                             <paper-input always-float-label label="Apellidos" value="{{apellidos}}" required></paper-input>
                             <paper-input always-float-label label="Precio" value="{{precio}}" required></paper-input>
-                            <paper-textarea cols="30" always-float-label label="Descripción" value="{{desc}}" required></paper-textarea>
+                            <paper-textarea cols="30" always-float-label label="Descripcion" value="{{desc}}" required></paper-textarea>
                             <paper-input type="file" id="inputFile" files="{{imagen}}">Selecciona la imagen</paper-input>
 
                             <paper-button on-click="insertar" class="mdl-button mdl-js-button mdl-button--raised" raised>Guardar</paper-button>
@@ -178,7 +178,7 @@ class InsertarConcursante extends Polymer.Element {
                     nombre: nombre,
                     apellidos: apellidos,
                     precio: precio,
-                    descripción: desc,
+                    descripcion: desc,
                     imagen: urlImg
                 });
             

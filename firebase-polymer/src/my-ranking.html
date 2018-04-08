@@ -1,0 +1,259 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel = "import" href = "../bower_components/polymerfire/firebase-auth.html">
+<link rel = "import" href = "../bower_components/polymerfire/firebase-document.html">
+<link rel = "import" href = "../bower_components/polymerfire/firebase-query.html">
+
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+
+<link rel="import" href="icon-toggle.html">
+
+<dom-module id="my-ranking">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+
+                padding: 10px;
+                font-family: sans-serif;
+                --icon-toggle-color: green;
+                --icon-toggle-outline-color: green;
+                --icon-toggle-pressed-color: white;
+                --iron-icon-width: 40px;
+                --iron-icon-height: 40px;
+                --visible: none;
+            }
+            .aParent div {
+            float: left;
+            clear: none; 
+            }
+            .contenedor {
+                display: var(--visible);
+                max-width: 500px;
+                margin: auto;
+                padding: 20px;
+                border-radius: 8px;
+                background-color: white;
+                border: 1px solid #ddd;
+                max-width: 800px;
+                margin: 16px auto 0 auto;
+            }
+
+            paper-textarea {
+                max-width: 500px;
+            }
+
+            paper-toast {
+                width: 300px;
+                margin-left: calc(50vw - 150px);
+            }
+
+            iron-list {
+                /*padding-top: 148px;
+                margin-top: 64px;*/
+                padding-bottom: 16px;
+            }
+
+            .item {
+                @apply --layout-horizontal;
+                padding: 20px;
+                border-radius: 8px;
+                background-color: white;
+                border: 1px solid #ddd;
+                max-width: 800px;
+                margin: 16px auto 0 auto;
+            }
+
+            .item:focus {
+                outline: 0;
+                border-color: #333;
+            }
+
+            .avatar {
+                height: 40px;
+                width: 40px;
+                border-radius: 20px;
+                box-sizing: border-box;
+                background-color: #DDD;
+            }
+
+            .pad {
+                padding: 0 16px;
+                @apply --layout-flex;
+                @apply --layout-vertical;
+            }
+
+            .primary {
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .secondary {
+                font-size: 14px;
+            }
+
+            .dim {
+                color: gray;
+            }
+
+            .spacer {
+                @apply --layout-flex;
+            }
+
+        </style>
+
+
+
+        <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
+        </firebase-auth>
+        <!--<firebase-document
+            path="/programas"
+            data="{{dataProgramas}}">
+        </firebase-document>-->
+
+        <firebase-document
+            path="/usuarios/[[user.uid]]"
+            data="{{usuario}}">
+        </firebase-document>
+
+        <firebase-query  
+            path="/usuarios"
+            order-by-child="puntuacion"
+            data="{{dataUsuarios}}">
+        </firebase-query>
+
+
+        <app-route
+            route="{{route}}"
+            pattern="[[rootPath]]:page"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+        </app-route>
+
+        
+
+
+        <paper-toast id="toast" text="Registro insertado"></paper-toast>
+        <paper-toast id="toastBorrar" text="Registro borrado"></paper-toast>
+
+                <h1>Ránking</h1>
+
+
+                <br>
+                <br>
+
+                <iron-list items="{{dataUsuarios}}" as="item">
+                        
+                    <template>
+                        <div>
+                            <div class="item" tabindex$="[[tabIndex]]">
+                                    
+                            
+
+                                <iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image>
+                                <div class="pad">
+                                    <div class="primary">[[item.puntuacion]] puntos [[item.nombre]]</div>
+                                </div>
+                                
+                                <template is="dom-if" if="{{usuario.admin}}">
+                                <a name="detalle-usuario" href="[[rootPath]]detalle-usuario">
+                                        <paper-button id-usuario1="[[item.$key]]" on-click="detalles" >Ver</paper-button>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </iron-list>
+            </div>
+
+    </template>
+
+    <script>
+        class MyUsuarios extends Polymer.Element {
+            static get is() {
+                return 'my-ranking';
+            }
+            
+
+            static get properties() {
+                return {
+                    idUsuario1: {
+                        type: String,
+                        notify: true,
+                        //observer: 'detalles'
+                    },
+                    usuario: {
+                        type: Object
+                    },
+                    dataUsuarios: {
+                        type: Array,
+                        reflectToAttribute: true,
+                        notifiy: true,
+                        observer: 'list',
+                        observer: '_reverse'
+                    },
+                    listaUsuarios: {
+                        type: Array,
+                        notifiy: true
+                    },
+                }
+            }
+            detalles(e) {
+                var claveUsuario = e.model.get('item.$key');
+                this.idUsuario1 = claveUsuario;
+            }
+            _reverse(e) {
+                this.dataUsuarios.reverse();
+                this.dataUsuarios.forEach(element => {
+                    var index = this.dataUsuarios.indexOf(element);
+                    
+                    if (element.admin==true) {
+                        this.dataUsuarios.splice(index, 1);
+                    }
+
+                });
+                this.dataUsuarios.forEach(element => {
+                    var index = this.dataUsuarios.indexOf(element);
+                    
+                    
+                    if (element.publico==false && this.usuario.admin!=true && this.usuario.nombre != element.nombre) {
+                        element.nombre = "Perfil privado";
+                    }
+                });
+                list();
+            }
+            
+            
+            
+
+            list() {
+                this.notifyPath('dataUsuarios');
+            }
+        }
+
+        window.customElements.define(MyUsuarios.is, MyUsuarios);
+    </script>
+</dom-module>

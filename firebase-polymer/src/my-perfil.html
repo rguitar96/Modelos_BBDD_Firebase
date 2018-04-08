@@ -39,21 +39,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
-
-<link rel="import" href="../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../bower_components/iron-list/iron-list.html">
-<link rel="import" href="../bower_components/iron-image/iron-image.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-
 <link rel = "import" href = "../bower_components/polymerfire/firebase-auth.html">
 <link rel = "import" href = "../bower_components/polymerfire/firebase-document.html">
-<link rel = "import" href = "../bower_components/polymerfire/firebase-query.html">
-
-<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
-<link rel="import" href="../bower_components/vaadin-checkbox/vaadin-checkbox.html">
-<link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
-<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
 
 <dom-module id="my-perfil">
     <template>
@@ -63,18 +50,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                 padding: 10px;
             }
-            .avatar {
-                height: 40px;
-                width: 40px;
-                border-radius: 20px;
-                box-sizing: border-box;
-                background-color: #DDD;
+            /*paper-input {
+                max-width: 400px;
+                margin: auto;
             }
+            iron-icon, div[suffix] {
+                color: hsl(0, 0%, 50%);
+                margin-right: 12px;
+            }*/
             .contenedor {
                 display: flex;
                 max-width: 500px;
                 margin: auto;
-                padding-bottom: 50px;
             }
             .img-perfil {
                 height: 150px;
@@ -85,30 +72,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 width: 300px;
                 margin-left: calc(50vw - 150px);
             }
-            .container {        
-                display: flex;
-                align-items: center;
-            }
-
-            .contenedorTablas {
-                display: flex;
-                flex-wrap: wrap;
-            }
-
-            .tabla {
-                flex: 1 1 200px;
-                padding: 10px;
-                border-radius: 8px;
-                background-color: white;
-                border: 1px solid #ddd;
-                margin: 5px;
-            }
-
-            paper-slider {
-                width: 100%;
-            }
-
-            vaadin-grid { cursor: pointer; }
 
         </style>
 
@@ -118,14 +81,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             path="/usuarios/[[user.uid]]"
             data="{{usuario}}">
         </firebase-document>
-        <firebase-query
-            path="/concursantes"
-            data="{{dataConcursantes}}">
-        </firebase-query>
-        <firebase-query
-            path="/duos"
-            data="{{dataDuos}}">
-        </firebase-query>
 
 
         <div class="card">
@@ -143,68 +98,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <iron-icon icon="mail" slot="prefix"></iron-icon>
                         <!--<div slot="suffix">@email.com</div>-->
                     </paper-input>
-                    <div class="tabla">
-                        <b>Concursante</b>
-                    <p><paper-input hidden$="[[!usuario.concursante_selec]]" always-float-label label="Concursante seleccionado" value="{{usuario.concursante_selec.nombre}}" readonly="readonly"></paper-input>
-                    <paper-input hidden$="[[!usuario.concursante_selec]]" always-float-label label="Creditos asignados" value="{{usuario.concursante_selec.creditos}}" readonly="readonly"></paper-input>
-                    </p>
-                    </div>
-                    <div class="tabla">
-                        <b>Duo</b>
-                    <p><paper-input hidden$="[[!usuario.concursante_selec]]" always-float-label label="Duo seleccionado" value="{{usuario.duo_selec.nombre}}" readonly="readonly"></paper-input>
-                    <paper-input hidden$="[[!usuario.concursante_selec]]" always-float-label label="Creditos asignados" value="{{usuario.duo_selec.creditos}}" readonly="readonly"></paper-input>
-                    </p>
-                    </div>
                     <form>
                         <p><paper-checkbox id="check" on-click="toggleChecked" >Perfil público</paper-checkbox></p>
                         <paper-button on-click="modificar" class="mdl-button mdl-js-button mdl-button--raised" raised>Guardar</paper-button>
 
                     </form>
                 </div>
+
             </div>
-            <div hidden$="[[usuario.concursante_selec]]">
-                 <ins>Selecciona un concursante y un duo, despues reparte 50 puntos entre ellos.</ins>
-                <div class="contenedorTablas">
-                    <div class="tabla">
-                        <h3>Concursantes</h3>
-                        <vaadin-grid  aria-label="Selection using Active Item Example" id="grid1" items="[[dataConcursantes]]" active-item="{{activeItem1}}" size="200">
+        </div>
 
-                            <vaadin-grid-column>
-                                <template class="header">Nombre</template>
-                                <template><div class="container"><iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image> [[item.nombre]]</div></template>
-                            </vaadin-grid-column>
-
-                            <vaadin-grid-column>
-                                <template class="header">Apellidos</template>
-                                <template>[[item.apellidos]]</template>
-                            </vaadin-grid-column>
-                        </vaadin-grid>
-                    </div>
-                    <div class="tabla">
-                        <h3>Duos</h3>
-                        <vaadin-grid aria-label="Selection using Active Item Example" id="grid2" items="[[dataDuos]]" active-item="{{activeItem2}}" size="200">
-
-                            <vaadin-grid-column>
-                                <template class="header">Nombre</template>
-                                <template><div class="container"><iron-image class="avatar" sizing="contain" src="[[item.imagen]]"></iron-image> [[item.nombre]]</div>
-                                    [[item.integrante1]] y [[item.integrante2]]</template>
-                            </vaadin-grid-column>
-                        </vaadin-grid>
-                    </div>
-
-                </div>
-                <div class="contenedor">
-                    <!--<div>
-                        <img class="img-perfil" src="{{imagen}}" alt="Logotipo OT" width="800" height="500">
-                    </div>-->
-                    <div>
-                        <p><b>Creditos:</b></p>
-                        <p>Concursante: {{sliderValue}} creditos/ Duo: {{_funSlider(sliderValue,50)}} creditos</p>
-                        <paper-slider id="ratings" pin snaps max="49" value="{{sliderValue}}" min="1"></paper-slider>
-                        <p><paper-button on-click="asignar" class="mdl-button mdl-js-button mdl-button--raised" raised>Seleccionar</paper-button></p>
-                    </div>
-                </div>
-            </div>
     </template>
 
     <script>
@@ -217,60 +120,20 @@ class MyPerfil extends Polymer.Element {
             user: {
                 type: Object,
                 observer: '_publico'
+
             },
             usuario: {
                 type: Object,
                 observer: '_publico'
-            },
-            activeItem1: {
-                observer: '_activeItemChanged1'
-            },
-            activeItem2: {
-                observer: '_activeItemChanged2'
             },
             statusKnown: {
                 type: Object
             }
         }
     }
-    _compruebaSiSeleccionado(usuario) {
-        return usuario.concursante_selec === undefined;
-    }
-    _activeItemChanged1(item) {
-        this.$.grid1.selectedItems = item ? [item] : [];
-    }
-    _activeItemChanged2(item) {
-        this.$.grid2.selectedItems = item ? [item] : [];
-    }
-    _funSlider(val1, val2) {
-        return (val2 - parseInt(val1));
-    }
-    asignar() {
-        if (!this.activeItem1 || !this.activeItem2) {
-            alert('Selecciona un Concursante y un Duo');
-        } else {
-            var instancia = this;
-
-            firebase.database().ref('usuarios/' + this.user.uid).update({
-                concursante_selec: {
-                    id: instancia.activeItem1.$key,
-                    nombre: instancia.activeItem1.nombre,
-                    imagen: instancia.activeItem1.imagen,
-                    creditos: this.sliderValue
-                },
-                duo_selec: {
-                    id: instancia.activeItem2.$key,
-                    nombre: instancia.activeItem2.nombre,
-                    integrante1: instancia.activeItem2.integrante1,
-                    integrante2: instancia.activeItem2.integrante2,
-                    imagen: instancia.activeItem2.imagen,
-                    creditos: 50 - parseInt(this.sliderValue)
-                }
-            });
-        }
-    }
     print() {
         alert(this.user);
+
     }
     _publico() {
         if (this.usuario.publico === undefined || !this.usuario.publico) { //es publico
@@ -280,15 +143,18 @@ class MyPerfil extends Polymer.Element {
         }
     }
     modificar() {
-        console.log(this.usuario.concursante_selec.nombre)
         var publico = this.$.check.checked;
-        /* if (this.$.check.checked) {
-         privado = false;
-         } else {
-         privado = true;
-         }*/
-        console.log('checked: ' + this.$.check.checked)
-        console.log('privado: ' + publico)
+       /* if (this.$.check.checked) {
+            privado = false;
+        } else {
+            privado = true;
+        }*/
+        console.log('checked: '+this.$.check.checked)
+        console.log('privado: '+publico)
+        
+        var nombreAux = this.usuario.nombre;
+
+
         firebase.database().ref('usuarios/' + this.user.uid).update({
             publico: publico
         });

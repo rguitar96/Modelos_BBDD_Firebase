@@ -110,7 +110,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             <paper-input always-float-label label="Integrante1" value="{{Int1}}" required></paper-input>
                             <paper-input always-float-label label="Integrante2" value="{{Int2}}" required></paper-input>
                             <paper-input always-float-label label="Precio" value="{{precio}}" required></paper-input>
-                            <paper-textarea cols="30" always-float-label label="Descripción" value="{{desc}}" required></paper-textarea>
+                            <paper-textarea cols="30" always-float-label label="Descripcion" value="{{desc}}" required></paper-textarea>
                             <paper-input type="file" id="inputFile" files="{{imagen}}">Selecciona la imagen</paper-input>
                             <paper-button on-click="insertar" class="mdl-button mdl-js-button mdl-button--raised" raised>Guardar</paper-button>
 
@@ -183,7 +183,7 @@ class InsertarDuo extends Polymer.Element {
                     integrante1: Int1,
                     integrante2: Int2,
                     precio: precio,
-                    descripción: desc,
+                    descripcion: desc,
                     imagen: urlImg
                 });
                 toast.open();
