@@ -60,7 +60,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <style include="shared-styles">
             :host {
                 display: block;
-
                 padding: 10px;
             }
             .avatar {
@@ -89,12 +88,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 display: flex;
                 align-items: center;
             }
-
             .contenedorTablas {
                 display: flex;
                 flex-wrap: wrap;
             }
-
             .tabla {
                 flex: 1 1 200px;
                 padding: 10px;
@@ -103,13 +100,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 border: 1px solid #ddd;
                 margin: 5px;
             }
-
             paper-slider {
                 width: 100%;
             }
-
             vaadin-grid { cursor: pointer; }
-
         </style>
 
         <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
@@ -260,7 +254,6 @@ class MyPerfil extends Polymer.Element {
     _compruebaSiSeleccionado(usuario) {
         return usuario.concursante_selec1 === undefined;
     }
-
     _selectItem1(e) {
         var posicion = this.$.grid1.selectedItems.indexOf(e.model.item);
         if (posicion >= 0) {
@@ -281,9 +274,7 @@ class MyPerfil extends Polymer.Element {
             alert('Ya se seleccionó el máximo de concursantes')
         }
         console.log(this.$.grid1.selectedItems)
-
     }
-
     _selectItem2(e) {
         if (this.$.grid2.selectedItems[0]) {
             this.creditos += parseInt(this.$.grid2.selectedItems[0].precio);
@@ -296,7 +287,6 @@ class MyPerfil extends Polymer.Element {
         this.creditos -= parseInt(e.model.item.precio);
         console.log(this.$.grid2.selectedItems)
     }
-
     _activeItemChanged1(item) {
         console.log(this.activeItem1)
         console.log(item)
@@ -332,7 +322,6 @@ class MyPerfil extends Polymer.Element {
         //this.$.grid1.selectedItems = item ? [item] : [];
         console.log(this.$.grid1.selectedItems)
     }
-
     _funSlider(val1, val2) {
         return (val2 - parseInt(val1));
     }
@@ -346,7 +335,6 @@ class MyPerfil extends Polymer.Element {
             var puntuacion = this.dataPuntuaciones.concursantes[this.$.grid1.selectedItems[0].$key].precio;
             puntuacion += this.dataPuntuaciones.concursantes[this.$.grid1.selectedItems[1].$key].precio;
             puntuacion += this.dataPuntuaciones.duos[this.$.grid2.selectedItems[0].$key].precio;
-
             firebase.database().ref('usuarios/' + this.user.uid).update({
                 puntuacion: puntuacion,
                 concursante_selec1: {
@@ -380,12 +368,10 @@ class MyPerfil extends Polymer.Element {
     }
     modificar() {
         var publico = this.$.check.checked;
-
         firebase.database().ref('usuarios/' + this.user.uid).update({
             publico: publico
         });
         this.$.toast.open();
-
         var p, u;
         for (p in this.comentarios) {
             for (u in this.comentarios[p]) {
@@ -394,11 +380,9 @@ class MyPerfil extends Polymer.Element {
                     this.comentarios[p][u].publico = publico;
             }
         }
-
         firebase.database().ref('comentarios').update(this.comentarios);
     }
 }
-
 window.customElements.define(MyPerfil.is, MyPerfil);
     </script>
 </dom-module>

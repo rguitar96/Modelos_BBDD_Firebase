@@ -189,7 +189,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             <a name="detalle-programa" href="[[rootPath]]detalle-programa">
                                 <paper-button id-programa="[[item.$key]]" on-click="detalles" >Ver</paper-button>
                             </a>
+                            <template is="dom-if" if="{{usuario.admin}}">
                             <paper-button id-programa="[[item.$key]]" on-click="borrar" >Borrar</paper-button>
+                            </template>
                         </div>
                     </div>
                 </template>
